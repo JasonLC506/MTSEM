@@ -1,0 +1,15 @@
+data/
+data_raw/
+*.pyc
+test.py
+log/
+result/
+ckpt/
+.ipynb_checkpoints
+git*
+venv/
+.idea/
+test/
+data_process/
+log*
+*.ipynb
