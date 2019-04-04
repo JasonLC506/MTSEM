@@ -1,0 +1,11 @@
+{
+  "name": "MtLinAdapt",
+  "group_dim": 100,
+  "learning_rate": 0.0001,
+  "batch_size": 8196,
+  "max_epoch": 20,
+  "eta_a": 0.1,
+  "eta_b": 0.1,
+  "eta_a_s": 0.1,
+  "eta_b_s": 0.1
+}
