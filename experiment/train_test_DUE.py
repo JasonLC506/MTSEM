@@ -174,7 +174,7 @@ class ArgParse(object):
 if __name__ == "__main__":
     args = ArgParse().parse_args()
 
-    data_dir = "C:/Users/jpz5181/Documents/GitHub/PSEM/data/CNN_foxnews/"
+    data_dir = "../../PSEM/data/CNN_foxnews/"
     data_prefix = "_CNN_foxnews_combined_K10"
 
     id_map_file = data_dir + "id_map" + data_prefix
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     # print(word_dictionary)
 
     data_name = args.data_name
-    data_dir = "C:/Users/jpz5181/Documents/GitHub/PSEM/data/" + data_name + "/"
+    data_dir = "../../PSEM/data/" + data_name + "/"
 
     batch_rBp_dir = data_dir + "train/"
     batch_valid_on_shell_dir = data_dir + "on_shell/valid/"
