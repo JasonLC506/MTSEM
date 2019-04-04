@@ -32,7 +32,7 @@ class DataDUELoader(object):
         self.batch_data_dir = batch_data_dir
         self.dataToken = dataToken
         self.max_doc_length = max_doc_length
-        self.paddle_index = paddle_index
+        self.paddle_index = paddle_index if paddle_index > 0 else self.V - paddle_index + 1
         self.data = dict()
         self.data_size = self.n_reactions = 0
         self.no_doc_index = no_doc_index
