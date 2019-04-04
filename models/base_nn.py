@@ -110,7 +110,9 @@ class NN(object):
             data_sizes = 0
             i_batch = 0
             for data_batched in data_generator.generate(batch_size=batch_size):
-                batch_size_true = data_batched["feature"].shape[0]
+                for data_key in data_batched:
+                    batch_size_true = data_batched[data_key].shape[0]
+                    break
                 feed_dict = fn_feed_dict(data_batched, batch_index=np.arange(batch_size_true))
                 op_update = fn_op_update(steps)          # generates op_update given global steps
                 fetch = [op_optimizer] + op_losses
