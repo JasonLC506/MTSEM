@@ -99,13 +99,6 @@ class MtLinAdapt(NN):
             name="w0"
         )
 
-        # for sparse feature #
-        feature = tf.one_hot(
-            indices=self.feature_index,
-            depth=self.feature_shape
-        )
-        feature = tf.reduce_sum(feature, axis=-2)
-
         a_s = tf.Variable(
             tf.random_normal(
                 shape=[self.feature_shape, self.label_dim],
@@ -127,6 +120,35 @@ class MtLinAdapt(NN):
         )
 
         w_s = a_s * self.w0 + b_s
+
+        w_s_g = self.feature_group * tf.expand_dims(
+            w_s,
+            axis=0
+        )
+
+        w_s_g_trans = tf.transpose(
+            w_s_g,
+            perm=[1, 0, 2]
+        )                                   # shape=[feature_shape, group_dim, label_dim]
+
+        sum_f_g_looked_up = tf.nn.embedding_lookup(
+            params=w_s_g_trans,
+            ids=self.feature_index
+        )                                   # shape=[batch_size, feature_dim, group_dim, label_dim]
+
+        sum_f_g = tf.reduce_sum(sum_f_g_looked_up, axis=1)        # shape=[batch_size, group_dim, label_dim]
+
+        feature_group_trans = tf.transpose(
+            self.feature_group,
+            perm=[1, 0, 2]
+        )
+
+        sum_g_looked_up = tf.nn.embedding_lookup(
+            params=feature_group_trans,
+            ids=self.feature_index
+        )                                   # shape=[batch_size, feature_dim, group_dim, label_dim]
+
+        sum_g = tf.reduce_sum(sum_g_looked_up, axis=1)             # shape=[batch_size, group_dim, label_dim]
 
         a = tf.Variable(
             tf.random_normal(
@@ -158,29 +180,20 @@ class MtLinAdapt(NN):
             ids=self.task_id
         )
 
-        task_scale = tf.tensordot(
-            a=task_scale_group,
-            b=self.feature_group,
-            axes=[1, 0]
+        self.logits_scale = tf.einsum(
+            "ij,ijk->ik",
+            task_scale_group,
+            sum_f_g
         )
 
-        task_shift = tf.tensordot(
-            a=task_shift_group,
-            b=self.feature_group,
-            axes=[1, 0]
+        self.logits_shift = tf.einsum(
+            "ij,ijk->ik",
+            task_shift_group,
+            sum_g
         )
 
-        wt_scaled = task_scale * tf.expand_dims(
-            w_s,
-            axis=0
-        )
-        wt = wt_scaled + task_shift
+        self.logits = self.logits_scale + self.logits_shift
 
-        self.logits = tf.einsum(
-            "ijk,ij->ik",
-            wt,
-            feature
-        )
         self.label_pred = tf.nn.softmax(
             logits=self.logits,
             axis=-1,
