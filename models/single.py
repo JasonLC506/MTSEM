@@ -112,7 +112,8 @@ class FC(NN):
     def train(
             self,
             data_generator,
-            data_generator_valid=None
+            data_generator_valid=None,
+            **kwargs
     ):
         """
         :param data_generator: data_batched: {

@@ -13,3 +13,6 @@ test/
 data_process/
 log*
 *.ipynb
+bert-master/
+feature_grouping/
+summary/

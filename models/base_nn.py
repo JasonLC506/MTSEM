@@ -208,9 +208,11 @@ class NN(object):
         :return:
         """
         output_result = None
-        for data_batched in data_generator.generate(batch_size=batch_size):
-            batch_size = data_batched["feature"].shape[0]
-            feed_dict = fn_feed_dict(data_batched, batch_index=np.arange(batch_size))
+        for data_batched in data_generator.generate(batch_size=batch_size, random_shuffle=False):
+            for data_key in data_batched:
+                batch_size_true = data_batched[data_key].shape[0]
+                break
+            feed_dict = fn_feed_dict(data_batched, batch_index=np.arange(batch_size_true))
             output_batch = session.run(output, feed_dict=feed_dict)
             if output_result is None:
                 output_result = output_batch
@@ -287,6 +289,12 @@ class NN(object):
             sess=self.sess,
             save_path=save_path
         )
+
+    def partial_restore(self, **kwargs):
+        """
+        restore subset of graph variables by each saver defined
+        """
+        pass
 
     @staticmethod
     def last_relevant(output, length):

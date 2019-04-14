@@ -1,5 +1,6 @@
 import json
 import tensorflow as tf
+import os
 
 
 def json_reader(file_name):
@@ -14,6 +15,8 @@ def json_reader(file_name):
                     b[index] = tf.nn.tanh
                 elif b[index] == "relu":
                     b[index] = tf.nn.relu
+                elif index == "bottom" and "config_file: " in b[index]:
+                    b[index] = json_reader(b[index][13:])[index]
         if isinstance(a, list):
             for i in range(len(a)):
                 cell_parser(a, i)

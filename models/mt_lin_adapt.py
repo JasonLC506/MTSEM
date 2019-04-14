@@ -286,6 +286,23 @@ class MtLinAdapt(NN):
             self,
             data_generator
     ):
-        pass
+        results = self._feed_forward_w_generator(
+            data_generator=data_generator,
+            fn_feed_dict=self._fn_feed_dict_predict,
+            output=[self.label_pred],
+            session=self.sess,
+            batch_size=self.model_spec["batch_size"]
+        )[0]
+        return results
 
-
+    def _fn_feed_dict_predict(
+            self,
+            data,
+            batch_index
+    ):
+        feed_dict = {
+            self.feature_index: data["feature_index"][batch_index],
+            self.weight: data["weight"][batch_index],
+            self.task_id: data["task"][batch_index]
+        }
+        return feed_dict
