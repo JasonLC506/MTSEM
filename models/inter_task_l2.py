@@ -24,7 +24,7 @@ class InterTaskL2(SharedBottom):
     ):
         super(InterTaskL2, self).__init__(**kwargs)
 
-    def _setup_regularization(self):
+    def _setup_regularization(self, **kwargs):
         regularization_loss = super(InterTaskL2, self)._setup_regularization()
 
         task_pairwise_l2 = 0.0

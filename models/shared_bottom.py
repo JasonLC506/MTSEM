@@ -152,6 +152,7 @@ class SharedBottom(NN):
             op_losses=[self.loss, self.loss_cross_entropy, self.loss_cross_entropy_task],
             session=self.sess,
             op_data_size=self.weight_sum_task,
+            fn_op_update=self._fn_op_update_train,
             batch_size=self.model_spec["batch_size"],
             max_epoch=self.model_spec["max_epoch"],
             data_generator_valid=data_generator_valid,
@@ -181,6 +182,9 @@ class SharedBottom(NN):
             self.task: data["task"][batch_index]
         }
         return feed_dict
+
+    def _fn_op_update_train(self, steps):
+        return None
 
     def predict(
             self,
@@ -288,7 +292,7 @@ class SharedBottom(NN):
             )
         return logits, weights, biases, saver
 
-    def _setup_regularization(self):
+    def _setup_regularization(self, **kwargs):
         if "regularization_l2" in self.model_spec:
             regularization_loss = 0.0
             for weight in self.task_weight_list:

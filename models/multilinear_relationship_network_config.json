@@ -1,10 +1,15 @@
 {
-  "name": "CrossStitch",
+  "name": "InterTaskL2",
   "bottom": "config_file: ../models/shared_bottom_config.json",
   "activation": "relu",
   "task_hidden_a_dimension": 32,
   "dropout_task_hidden_a": 0.7,
   "regularization_l2": 0.0,
+  "regularization_variable_update_frequency": 30,
+  "regularization_multilinear_norm": 1.0,
+  "covariance_epsilon": 0.00001,
+  "matrix_inverse_singular_value_threshold": 0.1,
+  "matrix_inverse_trace_threshold": 3000.0,
   "learning_rate": 0.0001,
   "batch_size": 512,
   "max_epoch": 100

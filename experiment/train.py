@@ -2,7 +2,7 @@ import argparse
 import numpy as np
 
 from experiment import DataGeneratorTrainTest, DataGeneratorFull, StageWiseSample
-from models import FC, SharedBottom, InterTaskL2, DmtrlTucker, CrossStitch
+from models import FC, SharedBottom, InterTaskL2, DmtrlTucker, CrossStitch, MMoE, MultilinearRelationshipNetwork
 from experiment import json_reader
 from common.readlogboard import read
 
@@ -12,7 +12,9 @@ Models = {
     'shared_bottom': SharedBottom,
     'inter_task_l2': InterTaskL2,
     'dmtrl_Tucker': DmtrlTucker,
-    'cross_stitch': CrossStitch
+    'cross_stitch': CrossStitch,
+    "mmoe": MMoE,
+    "multilinear_relationship_network": MultilinearRelationshipNetwork
 }
 
 RANDOM_SEED_NP = 2019
@@ -155,12 +157,13 @@ class ArgParse(object):
         parser.add_argument("-tr", "--train_ratio", default=0.7, type=float)
         parser.add_argument("-vr", "--valid_ratio", default=0.1, type=float)
         parser.add_argument("-sw", "--stage_wise", default=True, action='store_false')
-        parser.add_argument("-M", "--Model", default="cross_stitch")
+        parser.add_argument("-M", "--Model", default="multilinear_relationship_network")
         parser.add_argument("-cf", "--config_file", default="config.json")
         parser.add_argument("-rp", "--restore_path", default=None)
         parser.add_argument("-rpb", "--restore_path_bottom", default=None)
         parser.add_argument("-rpt", "--restore_path_top", default=None)
-        parser.add_argument("-mn", "--model_name", default="cross_stitch_MNIST_MTL")
+        parser.add_argument("-rpr", "--restore_path_regularization", default=None)
+        parser.add_argument("-mn", "--model_name", default="multilinear_relationship_network_MNIST_MTL")
         parser.add_argument("-fss", "--full_split_saver", default=False, action="store_true")
         parser.add_argument("-nr", "--num_repeats", default=1, type=int)
         self.parser = parser
@@ -186,7 +189,8 @@ if __name__ == "__main__":
         restore_path=args.restore_path,
         partial_restore_paths={
             "save_path_bottom": args.restore_path_bottom,
-            "save_path_task_specific_top": args.restore_path_top
+            "save_path_task_specific_top": args.restore_path_top,
+            "save_path_regularization": args.restore_path_regularization
         },
         model_name=args.model_name,
         full_split_saver=args.full_split_saver,

@@ -1,7 +1,9 @@
 {
-  "name": "CrossStitch",
+  "name": "MMoE",
   "bottom": "config_file: ../models/shared_bottom_config.json",
   "activation": "relu",
+  "n_experts": 8,
+  "expert_dimension": 32,
   "task_hidden_a_dimension": 32,
   "dropout_task_hidden_a": 0.7,
   "regularization_l2": 0.0,

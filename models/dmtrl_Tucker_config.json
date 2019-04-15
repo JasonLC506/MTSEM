@@ -1,11 +1,6 @@
 {
-  "name": "SharedBottom",
-  "bottom": {
-      "dropout_feature": 0.5,
-      "dropout_hidden": 0.7,
-      "hidden_dimension": 64,
-      "activation": "relu"
-  },
+  "name": "DmtrlTucker",
+  "bottom": "config_file: ../models/shared_bottom_config.json",
   "activation": "relu",
   "task_hidden_a_dimension": 32,
   "dropout_task_hidden_a": 0.7,
