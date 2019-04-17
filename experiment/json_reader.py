@@ -17,6 +17,8 @@ def json_reader(file_name):
                     b[index] = tf.nn.relu
                 elif index == "bottom" and "config_file: " in b[index]:
                     b[index] = json_reader(b[index][13:])[index]
+                elif index == "optim_params" and "config_file: " in b[index]:
+                    b[index] = json_reader(b[index][13:])[index]
         if isinstance(a, list):
             for i in range(len(a)):
                 cell_parser(a, i)

@@ -368,6 +368,5 @@ class NN(object):
             }
         )
 
-
 if __name__ == "__main__":
     reward = NN()

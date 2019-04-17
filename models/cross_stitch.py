@@ -137,24 +137,10 @@ class CrossStitch(SharedBottom):
 
     def partial_restore(
             self,
-            save_path_bottom=None,
-            save_path_task_specific_top=None,
-            save_path_cross_stitch_units=None
+            save_path_cross_stitch_units=None,
+            **kwargs
     ):
-        if self.sess is None:
-            self.initialization()
-        if save_path_bottom is not None:
-            self.bottom_saver.restore(
-                sess=self.sess,
-                save_path=save_path_bottom
-            )
-            print("bottom restored from %s" % save_path_bottom)
-        if save_path_task_specific_top is not None:
-            self.task_specific_top_saver.restore(
-                sess=self.sess,
-                save_path=save_path_task_specific_top
-            )
-            print("task_specific_top restored from %s" % save_path_task_specific_top)
+        super(CrossStitch, self).partial_restore(**kwargs)
         if save_path_cross_stitch_units is not None:
             self.cross_stitch_units_saver.restore(
                 sess=self.sess,

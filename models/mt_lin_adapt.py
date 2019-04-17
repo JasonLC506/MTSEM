@@ -232,11 +232,14 @@ class MtLinAdapt(NN):
             self.weight,
             axes=[0, 0]
         )
-        self.loss = self.loss_cross_entropy + \
-            self.model_spec["eta_a"] * self.l2_a + \
+        self.loss_cross_entropy_mean = self.loss_cross_entropy / tf.reduce_sum(self.weight)
+
+        self.regularization_loss = self.model_spec["eta_a"] * self.l2_a + \
             self.model_spec["eta_b"] * self.l2_b + \
             self.model_spec["eta_a_s"] + self.l2_a_s + \
             self.model_spec["eta_b_s"] + self.l2_b_s
+        self.loss = self.loss_cross_entropy + self.regularization_loss
+        self.loss_mean = self.loss_cross_entropy_mean + self.regularization_loss
 
     def _setup_optim(self):
         # TODO:: using BERT optimizer with warm-up and weight decay and correct l2 regularization
@@ -244,7 +247,7 @@ class MtLinAdapt(NN):
             learning_rate=self.model_spec["learning_rate"],
             epsilon=1e-06,
             name="optimizer"
-        ).minimize(self.loss)
+        ).minimize(self.loss_mean)
 
     def train(
             self,

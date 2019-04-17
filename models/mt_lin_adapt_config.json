@@ -1,7 +1,7 @@
 {
   "name": "MtLinAdapt",
   "group_dim": 100,
-  "learning_rate": 0.0001,
+  "learning_rate": 0.01,
   "batch_size": 8196,
   "max_epoch": 20,
   "eta_a": 0.1,

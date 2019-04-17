@@ -7,3 +7,4 @@ from models.dmtrl_Tucker import DmtrlTucker
 from models.cross_stitch import CrossStitch
 from models.mmoe import MMoE
 from models.multilinear_relationship_network import MultilinearRelationshipNetwork
+from models.topic_task_sparse import TopicTaskSparse

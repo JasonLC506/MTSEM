@@ -5,8 +5,7 @@ to be used as super-class for other NN-based MTL networks
 import tensorflow as tf
 
 from models import NN
-
-Optimizer = tf.train.AdamOptimizer
+from common import StochasticGradientDescentOptimizer as Optimizer
 
 
 class SharedBottom(NN):
@@ -114,15 +113,15 @@ class SharedBottom(NN):
         # sum-up to total loss
         self.loss_cross_entropy = tf.reduce_sum(self.loss_cross_entropy_task)
         self.regularization_loss = self._setup_regularization()
+        self.loss_cross_entropy_mean = self.loss_cross_entropy / tf.reduce_sum(self.weight)
         self.loss = self.loss_cross_entropy + self.regularization_loss
+        self.loss_mean = self.loss_cross_entropy_mean + self.regularization_loss
 
     def _setup_optim(self):
         # TODO:: using BERT optimizer with warm-up and weight decay
         self.optimizer = Optimizer(
-            learning_rate=self.model_spec["learning_rate"],
-            epsilon=1e-06,
-            name="optimizer"
-        ).minimize(self.loss)
+            optim_params=self.model_spec["optim_params"]
+        ).minimize(self.loss_mean)
 
     def train(
             self,
@@ -247,9 +246,26 @@ class SharedBottom(NN):
         :param feature: shape=(batch_size, feature_dim)
         :return:
         """
+        return self._setup_task_specific_block(
+            feature=feature,
+            task_dim=self.task_dim,
+            model_spec=self.model_spec,
+            out_dim=self.label_dim,
+            scope=scope
+        )
+
+    @staticmethod
+    def _setup_task_specific_block(
+            feature,
+            task_dim,
+            model_spec,
+            out_dim,
+            out_activation=None,
+            scope="task_specific_block"
+    ):
         with tf.variable_scope(scope):
             # expand shared feature to task_dim #
-            task_ones = tf.ones(shape=[self.task_dim])
+            task_ones = tf.ones(shape=[task_dim])
             feature_task_expanded = tf.einsum(
                 "ik,j->ijk",
                 feature,
@@ -258,26 +274,26 @@ class SharedBottom(NN):
 
             weights, biases = [], []
             # hidden layers #
-            hidden_a, hidden_a_weights, hidden_a_biases = self.tf_task_specific_dense(
+            hidden_a, hidden_a_weights, hidden_a_biases = SharedBottom.tf_task_specific_dense(
                 inputs=feature_task_expanded,
-                units=self.model_spec["task_hidden_a_dimension"],
-                task_dim=self.task_dim,
-                activation=self.model_spec['activation'],
+                units=model_spec["task_hidden_a_dimension"],
+                task_dim=task_dim,
+                activation=model_spec['activation'],
                 name="hidden_a"
             )
             weights += hidden_a_weights
             biases += hidden_a_biases
             hidden_a_dropout = tf.layers.dropout(
                 hidden_a,
-                rate=self.model_spec["dropout_task_hidden_a"],
+                rate=model_spec["dropout_task_hidden_a"],
                 name="task_hidden_a_dropout"
             )
             # logit layer #
-            logits, logits_weights, logits_biases = self.tf_task_specific_dense(
+            logits, logits_weights, logits_biases = SharedBottom.tf_task_specific_dense(
                 inputs=hidden_a_dropout,
-                units=self.label_dim,
-                task_dim=self.task_dim,
-                activation=None,
+                units=out_dim,
+                task_dim=task_dim,
+                activation=out_activation,
                 name="logits"
             )
             weights += logits_weights
@@ -290,6 +306,7 @@ class SharedBottom(NN):
                 ),
                 max_to_keep=1000
             )
+
         return logits, weights, biases, saver
 
     def _setup_regularization(self, **kwargs):

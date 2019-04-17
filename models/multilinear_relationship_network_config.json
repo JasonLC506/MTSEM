@@ -10,7 +10,7 @@
   "covariance_epsilon": 0.00001,
   "matrix_inverse_singular_value_threshold": 0.1,
   "matrix_inverse_trace_threshold": 3000.0,
-  "learning_rate": 0.0001,
+  "optim_params": "config_file: ../common/stochastic_gradient_descent_optimizer_config.json",
   "batch_size": 512,
   "max_epoch": 100
 }

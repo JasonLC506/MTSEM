@@ -5,8 +5,7 @@ import tensorflow as tf
 import numpy as np
 
 from models import NN
-
-Optimizer = tf.train.AdamOptimizer
+from common import StochasticGradientDescentOptimizer as Optimizer
 
 
 class FC(NN):
@@ -99,15 +98,15 @@ class FC(NN):
         self.weight_sum_task = tf.reduce_sum(weight_task, axis=0)  # for average calculation
         # sum-up to total loss
         self.loss_cross_entropy = tf.reduce_sum(self.loss_cross_entropy_task)
+        self.loss_cross_entropy_mean = self.loss_cross_entropy / tf.reduce_sum(self.weight)
         self.loss = self.loss_cross_entropy
+        self.loss_mean = self.loss_cross_entropy_mean
 
     def _setup_optim(self):
         # TODO:: using BERT optimizer with warm-up and weight decay
         self.optimizer = Optimizer(
-            learning_rate=self.model_spec["learning_rate"],
-            epsilon=1e-06,
-            name="optimizer"
-        ).minimize(self.loss)
+            optim_params=self.model_spec["optim_params"]
+        ).minimize(self.loss_mean)
 
     def train(
             self,
