@@ -16,8 +16,8 @@ OPTIMIZERSEPARATOR = "OptimizerSeparator"
 HISTORY_CUTOFF = 200
 TF_RANDOM_SEED = 2018
 
-LOG_PATH = "../log"
-CKPT_PATH = "../ckpt"
+LOG_PATH = "../log/"
+CKPT_PATH = "../ckpt/"
 
 if not os.path.exists(LOG_PATH):
     os.makedirs(LOG_PATH)
@@ -175,6 +175,9 @@ class NN(object):
             if verbose:
                 print(message)
                 log_path = os.path.join(LOG_PATH, save_path_prefixs[-1])
+                log_path_dir = "/".join(log_path.split("/")[:-1])
+                if not os.path.exists(log_path_dir):
+                    os.makedirs(log_path_dir)
                 with open(log_path, "a") as logf:
                     logf.write(message + "\n")
                 if op_savers is not None:
@@ -208,9 +211,11 @@ class NN(object):
         :return:
         """
         output_result = None
-        for data_batched in data_generator.generate(batch_size=batch_size):
-            batch_size = data_batched["feature"].shape[0]
-            feed_dict = fn_feed_dict(data_batched, batch_index=np.arange(batch_size))
+        for data_batched in data_generator.generate(batch_size=batch_size, random_shuffle=False):
+            for data_key in data_batched:
+                batch_size_true = data_batched[data_key].shape[0]
+                break
+            feed_dict = fn_feed_dict(data_batched, batch_index=np.arange(batch_size_true))
             output_batch = session.run(output, feed_dict=feed_dict)
             if output_result is None:
                 output_result = output_batch
@@ -288,6 +293,12 @@ class NN(object):
             save_path=save_path
         )
 
+    def partial_restore(self, **kwargs):
+        """
+        restore subset of graph variables by each saver defined
+        """
+        pass
+
     @staticmethod
     def last_relevant(output, length):
         """
@@ -359,7 +370,6 @@ class NN(object):
                 fixed_input_placeholder: fixed_input_data
             }
         )
-
 
 if __name__ == "__main__":
     reward = NN()

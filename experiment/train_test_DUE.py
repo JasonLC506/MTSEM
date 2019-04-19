@@ -85,7 +85,9 @@ def test(
         max_doc_length=30,
         model_name=None,
         restore_path=None,
-        no_doc_index=False
+        no_doc_index=False,
+        feature_group_file=None,
+        w0_file=None
 ):
     np.random.seed(RANDOM_SEED_NP)
     data = DataDUELoader(
@@ -106,7 +108,10 @@ def test(
         model_spec=model_spec,
         model_name=model_name
     )
-    model.initialization()
+    model.initialization(
+        feature_group_file=feature_group_file,
+        w0_file=w0_file
+    )
 
     def performance(
             model_local,
@@ -159,7 +164,7 @@ class ArgParse(object):
         parser.add_argument("-dm", "--data_name", default="CNN_nolike")
         parser.add_argument("-mdl", "--max_doc_length", default=30, type=int)
         parser.add_argument("-cf", "--config_file", default="../models/mt_lin_adapt_config.json")
-        parser.add_argument("-rp", "--restore_path", default=None)
+        parser.add_argument("-rp", "--restore_path", default="../ckpt/MtLinAdapt_CNN_nolike/epoch_003")
         parser.add_argument("-mn", "--model_name", default=None)
         parser.add_argument("-di", "--doc_index", default=False, action="store_true")
         parser.add_argument("-fgf", "--feature_group_file", default="../ckpt/CNN_nolike/feature_group_CNN_nolike")
@@ -204,41 +209,43 @@ if __name__ == "__main__":
     meta_data_on_valid_file = data_dir + "meta_data_on_shell_valid"
     meta_data_on_test_file = data_dir + "meta_data_on_shell_test"
 
-    train(
-        config_file=args.config_file,
-        meta_data_file=meta_data_train_file,
-        id_map=id_map_reverse,
-        dataToken=dataToken,
-        batch_data_dir_train=batch_rBp_dir,
-        batch_data_dir_valid=batch_valid_on_shell_dir,
-        max_doc_length=args.max_doc_length,
-        model_name=args.data_name if args.model_name is None else args.model_name + "_" + args.data_name,
-        restore_path=args.restore_path,
-        no_doc_index=not args.doc_index,
-        feature_group_file=args.feature_group_file,
-        w0_file=args.w0_file
-    )
-
-    # if args.restore_path is not None:
-    #     if os.path.isdir(args.restore_path):
-    #         file_names = list(os.listdir(args.restore_path))
-    #         del file_names[file_names.index("checkpoint")]
-    #         restore_paths = list(map(lambda x: x[:9], file_names))      # 9: len("epoch_%03d")
-    #         restore_paths = sorted(list(set(restore_paths)))
-    #         restore_paths = list(map(lambda x: os.path.join(args.restore_path, x), restore_paths))
-    #     else:
-    #         restore_paths = [args.restore_path]
-    # else:
-    #     restore_paths = None
-    #
-    # test(
+    # train(
     #     config_file=args.config_file,
     #     meta_data_file=meta_data_train_file,
     #     id_map=id_map_reverse,
     #     dataToken=dataToken,
-    #     batch_data_dir=batch_valid_on_shell_dir if args.valid_test == "v" else batch_test_on_shell_dir,
+    #     batch_data_dir_train=batch_rBp_dir,
+    #     batch_data_dir_valid=batch_valid_on_shell_dir,
     #     max_doc_length=args.max_doc_length,
     #     model_name=args.data_name if args.model_name is None else args.model_name + "_" + args.data_name,
-    #     restore_path=restore_paths,
-    #     no_doc_index=not args.doc_index
+    #     restore_path=args.restore_path,
+    #     no_doc_index=not args.doc_index,
+    #     feature_group_file=args.feature_group_file,
+    #     w0_file=args.w0_file
     # )
+
+    if args.restore_path is not None:
+        if os.path.isdir(args.restore_path):
+            file_names = list(os.listdir(args.restore_path))
+            del file_names[file_names.index("checkpoint")]
+            restore_paths = list(map(lambda x: x[:9], file_names))      # 9: len("epoch_%03d")
+            restore_paths = sorted(list(set(restore_paths)))
+            restore_paths = list(map(lambda x: os.path.join(args.restore_path, x), restore_paths))
+        else:
+            restore_paths = [args.restore_path]
+    else:
+        restore_paths = None
+
+    test(
+        config_file=args.config_file,
+        meta_data_file=meta_data_train_file,
+        id_map=id_map_reverse,
+        dataToken=dataToken,
+        batch_data_dir=batch_valid_on_shell_dir if args.valid_test == "v" else batch_test_on_shell_dir,
+        max_doc_length=args.max_doc_length,
+        model_name=args.data_name if args.model_name is None else args.model_name + "_" + args.data_name,
+        restore_path=restore_paths,
+        no_doc_index=not args.doc_index,
+        feature_group_file=args.feature_group_file,
+        w0_file=args.w0_file
+    )

@@ -1,0 +1,1 @@
+from data_synthesizer.topic_task_sparse import write2file

@@ -1,0 +1,5 @@
+{
+  "model_spec": {
+    "task_pairwise_l2": 0.01
+  }
+}

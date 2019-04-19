@@ -1,0 +1,7 @@
+{
+  "model_spec": {
+    "primary_model_ckpt": "../ckpt/shared_bottom_MNIST_MTL/epoch_099",
+    "tensor_decomposition_method": "Tucker",
+    "tensor_decomposition_eps_or_k": 0.1
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "model_spec": {
+    "topic_dim": 5,
+    "sparse_regularization_lambda": 0.000001,
+    "global_block_weight": 1.0
+  }
+}

@@ -15,3 +15,7 @@ log*
 *.ipynb
 pbs/
 summary/
+bert-master/
+feature_grouping/
+summary/
+ht_log/

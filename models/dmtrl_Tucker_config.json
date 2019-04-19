@@ -1,0 +1,14 @@
+{
+  "name": "DmtrlTucker",
+  "bottom": "config_file: ../models/shared_bottom_config.json",
+  "activation": "relu",
+  "task_hidden_a_dimension": 32,
+  "dropout_task_hidden_a": 0.7,
+  "regularization_l2": 0.0,
+  "optim_params": "config_file: ../common/stochastic_gradient_descent_optimizer_config.json",
+  "batch_size": 512,
+  "max_epoch": 100,
+  "primary_model_ckpt": "../ckpt/shared_bottom_MNIST_MTL/epoch_099",
+  "tensor_decomposition_method": "Tucker",
+  "tensor_decomposition_eps_or_k": 0.1
+}

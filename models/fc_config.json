@@ -3,7 +3,7 @@
   "dropout_feature": 0.5,
   "hidden_dimension": 8,
   "dropout_hidden": 0.7,
-  "learning_rate": 0.0001,
+  "optim_params": "config_file: ../common/stochastic_gradient_descent_optimizer_config.json",
   "batch_size": 512,
   "max_epoch": 100,
   "activation": "tanh"

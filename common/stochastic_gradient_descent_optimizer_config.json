@@ -1,0 +1,7 @@
+{
+  "optim_params": {
+    "learning_rate": 0.01,
+    "decay_steps": 100,
+    "decay_rate": 0.9
+  }
+}
