@@ -1,0 +1,9 @@
+{
+  "model_spec": {
+    "regularization_variable_update_frequency": 30,
+    "regularization_multilinear_norm": 1.0,
+    "covariance_epsilon": 0.00001,
+    "matrix_inverse_singular_value_threshold": 0.1,
+    "matrix_inverse_trace_threshold": 3000.0
+  }
+}

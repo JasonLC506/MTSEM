@@ -16,8 +16,8 @@ OPTIMIZERSEPARATOR = "OptimizerSeparator"
 HISTORY_CUTOFF = 200
 TF_RANDOM_SEED = 2018
 
-LOG_PATH = "../log"
-CKPT_PATH = "../ckpt"
+LOG_PATH = "../log/"
+CKPT_PATH = "../ckpt/"
 
 if not os.path.exists(LOG_PATH):
     os.makedirs(LOG_PATH)
@@ -175,6 +175,9 @@ class NN(object):
             if verbose:
                 print(message)
                 log_path = os.path.join(LOG_PATH, save_path_prefixs[-1])
+                log_path_dir = "/".join(log_path.split("/")[:-1])
+                if not os.path.exists(log_path_dir):
+                    os.makedirs(log_path_dir)
                 with open(log_path, "a") as logf:
                     logf.write(message + "\n")
                 if op_savers is not None:

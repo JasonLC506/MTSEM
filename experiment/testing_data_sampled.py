@@ -96,11 +96,11 @@ class StageWiseSample(DataGeneratorTrainTest):
 
 
 if __name__ == "__main__":
-    data_dir = "../data/"
+    data_dir = "../data/MNIST_MTL/"
     sampler = StageWiseSample(
-        feature_file=data_dir + "posts_content_all_features_[CLS]_SUM_joined",
-        label_file=data_dir + "posts_reactions_all_joined",
-        task_file=data_dir + "posts_content_all_text_ids_joined",
+        feature_file=data_dir + "feature_remained_80",
+        label_file=data_dir + "label_remained_80",
+        task_file=data_dir + "id_remained_80",
         sample_rate=0.2
     )
     sampler.sample()

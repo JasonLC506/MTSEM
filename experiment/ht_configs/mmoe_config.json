@@ -1,0 +1,6 @@
+{
+  "model_spec": {
+    "n_experts": 8,
+    "expert_dimension": 32
+  }
+}

@@ -2,22 +2,10 @@ import argparse
 import numpy as np
 
 from experiment import DataGeneratorTrainTest, DataGeneratorFull, StageWiseSample
-from models import FC, SharedBottom, InterTaskL2, DmtrlTucker, CrossStitch, MMoE, MultilinearRelationshipNetwork, \
-    TopicTaskSparse
+from models import Models
 from experiment import json_reader
 from common.readlogboard import read
 
-
-Models = {
-    'fc': FC,
-    'shared_bottom': SharedBottom,
-    'inter_task_l2': InterTaskL2,
-    'dmtrl_Tucker': DmtrlTucker,
-    'cross_stitch': CrossStitch,
-    "mmoe": MMoE,
-    "multilinear_relationship_network": MultilinearRelationshipNetwork,
-    "topic_task_sparse": TopicTaskSparse
-}
 
 RANDOM_SEED_NP = 2019
 
@@ -31,7 +19,7 @@ def run(
         train_ratio=0.7,
         valid_ratio=0,
         stage_wise=True,
-        Model=FC,
+        Model=Models['fc'],
         config_file=None,
         restore_path=None,
         partial_restore_paths=None,
