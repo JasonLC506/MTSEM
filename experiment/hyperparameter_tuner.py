@@ -165,14 +165,17 @@ class HyperparameterTuner(object):
     ):
         with open(perfs_file, "r") as f:
             for line in f:
-                id_, perfs = line.rstrip("\n").split(id_separator)
-                id_ = int(id_)
-                perfs = list(map(float, perfs.split(field_separator)))
-                self.read_perf(
-                    id_=id_,
-                    perf=perfs,
-                    write_out=False
-                )
+                try:
+                    id_, perfs = line.rstrip("\n").split(id_separator)
+                    id_ = int(id_)
+                    perfs = list(map(float, perfs.split(field_separator)))
+                    self.read_perf(
+                        id_=id_,
+                        perf=perfs,
+                        write_out=False
+                    )
+                except:
+                    warnings.warn("perf parsing problem with line %s" % line.rstrip("\n"))
 
     @staticmethod
     def write2file(
