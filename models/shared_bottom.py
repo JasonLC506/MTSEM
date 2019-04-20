@@ -162,10 +162,10 @@ class SharedBottom(NN):
         return results
 
     def _train_full_split_saver(self):
-        op_savers = [self.saver, self.bottom_saver, self.task_specific_top_saver]
+        op_savers = [self.bottom_saver, self.task_specific_top_saver, self.saver]
         save_path_prefixs = list(map(
             lambda x: self.model_name + x,
-            ["", "_bottom", "_task_specific_top"]
+            ["_bottom", "_task_specific_top", ""]
         ))
         return op_savers, save_path_prefixs
 

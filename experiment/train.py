@@ -3,7 +3,7 @@ import numpy as np
 
 from experiment import DataGeneratorTrainTest, DataGeneratorFull, StageWiseSample
 from models import Models
-from experiment import json_reader
+from experiment import json_reader, dict_conservative_update
 from common.readlogboard import read
 
 
@@ -19,13 +19,8 @@ def run(
         train_ratio=0.7,
         valid_ratio=0,
         stage_wise=True,
-        Model=Models['fc'],
-        config_file=None,
-        restore_path=None,
-        partial_restore_paths=None,
-        model_name=None,
-        full_split_saver=False,
-        num_repeats=1
+        num_repeats=1,
+        **model_kwargs_wrap
 ):
     """
 
@@ -37,17 +32,26 @@ def run(
     :param train_ratio:
     :param valid_ratio:
     :param stage_wise:
-    :param Model:
-    :param config_file:
-    :param restore_path:
-    :param partial_restore_paths: dictionary of paths for each partial saver
-    :param model_name:
-    :param full_split_saver:
     :param num_repeats:
+    :param model_kwargs_wrap: {
+        "model_kwargs": {
+            Model:
+            config_file:
+            model_name:
+            partial_restore_paths:
+            restore_path:
+            full_split_saver:
+        }
+        "model_primary_kwargs": {
+        }
+    }
     :return:
     """
     np.random.seed(RANDOM_SEED_NP)
     best_epoch_run, results_run = [], []
+
+    model_kwargs = model_kwargs_wrap["model_kwargs"]
+    model_primary_kwargs = model_kwargs_wrap["model_primary_kwargs"]
     for i_run in range(num_repeats):
         test_sampler = StageWiseSample(
             feature_file=feature_file,
@@ -71,37 +75,40 @@ def run(
         data_valid = data.valid if data.valid.data_size > 0 else None
 
         # initialize model #
-        model_spec = json_reader(config_file)
-
-        def init_model(data):
-            model = Model(
-                feature_dim=data.feature_dim,
-                label_dim=data.label_dim,
-                task_dim=data.task_dim,
-                model_spec=model_spec,
-                model_name=model_name
+        model_spec = json_reader(model_kwargs['config_file'])
+        if model_primary_kwargs is not None:
+            # train primary model to initialize model #
+            model_spec_primary_ = json_reader(model_primary_kwargs['config_file'])
+            model_spec_primary = dict_conservative_update(
+                dict_base=model_spec_primary_,
+                dict_new=model_spec
+            )                         # make sure the shared hps are consistent
+            model_spec_primary["optim_params"] = model_spec_primary_["optim_params"]
+            model_spec_primary["max_epoch"] = model_spec_primary_["max_epoch"]
+            [best_epoch_primary, results_], model_primary_save_path, _m = train_model(
+                data_train=data_train,
+                data_valid=data_valid,
+                model_spec=model_spec_primary,
+                **model_primary_kwargs
             )
-            model.initialization()
-            return model
+            # for models use parts of primary model (e.g., cross_stitch)
+            for path_name in model_kwargs["partial_restore_paths"]:
+                name_pattern = model_kwargs["partial_restore_paths"][path_name]
+                if name_pattern is None:
+                    partial_restore_path = None
+                else:
+                    partial_restore_path = name_pattern.format(best_epoch_primary)
+                model_kwargs["partial_restore_paths"][path_name] = partial_restore_path
+            # for models use full of primary model for graph definition (e.g., dmtrl_Tucker)
+            if "primary_model_ckpt" in model_spec:
+                model_spec["primary_model_ckpt"] = model_primary_save_path.format(best_epoch_primary)
 
-        model = init_model(data=data)
-        if partial_restore_paths is not None:
-            model.partial_restore(**partial_restore_paths)
-        if restore_path is not None:
-            model.restore(restore_path)
-
-        # train #
-        results = model.train(
-            data_generator=data_train,
-            data_generator_valid=data_valid,
-            full_split_saver=full_split_saver
+        [best_epoch, results], model_best_save_path, model = train_model(
+            data_train=data_train,
+            data_valid=data_valid,
+            model_spec=model_spec,
+            **model_kwargs
         )
-        print("training output: %s" % str(results))
-
-        best_epoch = read(
-            directory="../summary/" + model.model_name,
-            main_indicator="epoch_losses_valid_00"
-        )[0]
         best_epoch_run.append(best_epoch)
 
         # test #
@@ -116,9 +123,14 @@ def run(
         data_test = data_test if data_test.data_size > 0 else None
 
         if data_test is not None:
-            model = init_model(data=data_test)
+            model = init_model(
+                data=data_test,
+                Model=model_kwargs["Model"],
+                model_spec=model_spec,
+                model_name=model_kwargs["model_name"]
+            )
             model.restore(
-                save_path="../ckpt/" + model.model_name + "/epoch_%03d" % int(best_epoch)       # dependent on save path
+                save_path=model_best_save_path.format(int(best_epoch))
             )
             results = model.test(
                 data_generator=data_test
@@ -128,6 +140,61 @@ def run(
 
     print("results:\n %s" % str(np.array(results_run)))
     print("best_epochs:\n %s" % str(np.array(best_epoch_run)))
+
+
+def init_model(
+        data,
+        Model,
+        model_spec,
+        model_name
+):
+    model = Model(
+        feature_dim=data.feature_dim,
+        label_dim=data.label_dim,
+        task_dim=data.task_dim,
+        model_spec=model_spec,
+        model_name=model_name
+    )
+    model.initialization()
+    return model
+
+
+def train_model(
+        Model,
+        model_spec,
+        model_name=None,
+        partial_restore_paths=None,
+        restore_path=None,
+        full_split_saver=False,
+        data_train=None,
+        data_valid=None,
+        **kwargs
+):
+    model = init_model(
+        data=data_train,
+        Model=Model,
+        model_spec=model_spec,
+        model_name=model_name
+    )
+    if partial_restore_paths is not None:
+        model.partial_restore(**partial_restore_paths)
+    if restore_path is not None:
+        model.restore(restore_path)
+
+    # train #
+    results = model.train(
+        data_generator=data_train,
+        data_generator_valid=data_valid,
+        full_split_saver=full_split_saver
+    )
+    print("training output: %s" % str(results))
+
+    best_epoch = read(
+        directory="../summary/" + model.model_name,
+        main_indicator="epoch_losses_valid_00"
+    )[0]
+    save_path = "../ckpt/" + model.model_name + "/epoch_{0:03d}"
+    return [best_epoch, results], save_path, model
 
 
 class ArgParse(object):
@@ -147,14 +214,22 @@ class ArgParse(object):
         parser.add_argument("-tr", "--train_ratio", default=0.7, type=float)
         parser.add_argument("-vr", "--valid_ratio", default=0.1, type=float)
         parser.add_argument("-sw", "--stage_wise", default=True, action='store_false')
-        parser.add_argument("-M", "--Model", default="cross_stitch")
+        parser.add_argument("-M", "--Model", default="dmtrl_Tucker")
         parser.add_argument("-cf", "--config_file", default="config.json")
         parser.add_argument("-rp", "--restore_path", default=None)
         parser.add_argument("-rpb", "--restore_path_bottom", default=None)
         parser.add_argument("-rpt", "--restore_path_top", default=None)
         parser.add_argument("-rpr", "--restore_path_regularization", default=None)
-        parser.add_argument("-mn", "--model_name", default="cross_stitch_MNIST_MTL")
+        parser.add_argument("-mn", "--model_name", default="dmtrl_Tucker_MNIST_MTL_test")
         parser.add_argument("-fss", "--full_split_saver", default=False, action="store_true")
+        parser.add_argument("-Mp", "--Model_primary", default=None)
+        parser.add_argument("-cfp", "--config_file_primary", default="config.json")
+        parser.add_argument("-rpp", "--restore_path_primary", default=None)
+        parser.add_argument("-rpbp", "--restore_path_bottom_primary", default=None)
+        parser.add_argument("-rptp", "--restore_path_top_primary", default=None)
+        parser.add_argument("-rprp", "--restore_path_regularization_primary", default=None)
+        parser.add_argument("-mnp", "--model_name_primary", default="cross_stitch_primary")
+        parser.add_argument("-fssp", "--full_split_saver_primary", default=False, action="store_true")
         parser.add_argument("-nr", "--num_repeats", default=1, type=int)
         self.parser = parser
 
@@ -174,15 +249,29 @@ if __name__ == "__main__":
         train_ratio=args.train_ratio,
         valid_ratio=args.valid_ratio,
         stage_wise=args.stage_wise,
-        Model=Models[args.Model],
-        config_file=args.model_dir + args.Model + "_" + args.config_file,
-        restore_path=args.restore_path,
-        partial_restore_paths={
-            "save_path_bottom": args.restore_path_bottom,
-            "save_path_task_specific_top": args.restore_path_top,
-            "save_path_regularization": args.restore_path_regularization
-        },
-        model_name=args.model_name,
-        full_split_saver=args.full_split_saver,
-        num_repeats=args.num_repeats
+        num_repeats=args.num_repeats,
+        model_kwargs=dict(
+            Model=Models[args.Model],
+            config_file=args.model_dir + args.Model + "_" + args.config_file,
+            restore_path=args.restore_path,
+            partial_restore_paths={
+                "save_path_bottom": args.restore_path_bottom,
+                "save_path_task_specific_top": args.restore_path_top,
+                "save_path_regularization": args.restore_path_regularization
+            },
+            model_name=args.model_name,
+            full_split_saver=args.full_split_saver
+        ),
+        model_primary_kwargs=None if args.Model_primary is None else dict(
+            Model=Models[args.Model_primary],
+            config_file=args.model_dir + args.Model_primary + "_" + args.config_file,
+            restore_path=args.restore_path_primary,
+            partial_restore_paths={
+                "save_path_bottom": args.restore_path_bottom_primary,
+                "save_path_task_specific_top": args.restore_path_top_primary,
+                "save_path_regularization": args.restore_path_regularization_primary
+            },
+            model_name=args.model_name_primary,
+            full_split_saver=args.full_split_saver_primary
+        )
     )

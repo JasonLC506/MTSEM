@@ -30,7 +30,7 @@ class DmtrlTucker(SharedBottom):
         self.primary_model.restore(
             save_path=kwargs['model_spec']['primary_model_ckpt']
         )
-
+        print("primary model restored from '%s'" % kwargs['model_spec']['primary_model_ckpt'])
         super(DmtrlTucker, self).__init__(**kwargs)
 
     def _setup_task_specific_top(

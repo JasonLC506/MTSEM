@@ -34,14 +34,15 @@ class CrossStitch(SharedBottom):
             scope="task_specific_top"
     ):
         weights, biases, cross_stitch_units = [], [], []
-        with tf.variable_scope(scope):
-            # expand shared feature to task_dim #
-            task_ones = tf.ones(shape=[self.task_dim])
-            feature_task_expanded = tf.einsum(
-                "ik,j->ijk",
-                feature,
-                task_ones
-            )
+        with tf.variable_scope(scope) as task_specific_top_scope:
+            with tf.name_scope(task_specific_top_scope.original_name_scope):
+                # expand shared feature to task_dim #
+                task_ones = tf.ones(shape=[self.task_dim])
+                feature_task_expanded = tf.einsum(
+                    "ik,j->ijk",
+                    feature,
+                    task_ones
+                )
 
             # hidden layers #
             hidden_a, hidden_a_weights, hidden_a_biases = self.tf_task_specific_dense(
@@ -59,43 +60,59 @@ class CrossStitch(SharedBottom):
                 name="task_hidden_a_dropout"
             )
 
-        with tf.variable_scope(scope + "_cross_stitch_units"):
-            stitch_a, cross_stitch_units_a = self.apply_cross_stitch(
-                inputs=hidden_a_dropout,
-                name="cross_stitch_units_a"
-            )
-            cross_stitch_units += cross_stitch_units_a
+        with tf.variable_scope("cross_stitch_units") as cross_stitch_scope:
+            with tf.name_scope(cross_stitch_scope.original_name_scope):
+                stitch_a, cross_stitch_units_a = self.apply_cross_stitch(
+                    inputs=hidden_a_dropout,
+                    name="cross_stitch_units_a"
+                )
+                cross_stitch_units += cross_stitch_units_a
 
         # logit layer #
-        with tf.variable_scope(scope):
-            logits, logits_weights, logits_biases = self.tf_task_specific_dense(
-                inputs=stitch_a,
-                units=self.label_dim,
-                task_dim=self.task_dim,
-                activation=None,
-                name="logits"
-            )
-            weights += logits_weights
-            biases += logits_biases
+        with tf.variable_scope(task_specific_top_scope) as scope1:
+            with tf.name_scope(scope1.original_name_scope):
+                logits, logits_weights, logits_biases = self.tf_task_specific_dense(
+                    inputs=stitch_a,
+                    units=self.label_dim,
+                    task_dim=self.task_dim,
+                    activation=None,
+                    name="logits"
+                )
+                weights += logits_weights
+                biases += logits_biases
 
-        with tf.variable_scope(scope):
-            saver = tf.train.Saver(
-                var_list=tf.get_collection(
-                    tf.GraphKeys.GLOBAL_VARIABLES,
-                    scope=tf.get_variable_scope().name
-                ),
-                max_to_keep=1000
-            )
-        with tf.variable_scope(scope + "_cross_stitch_units"):
-            cross_stitch_units_saver = tf.train.Saver(
-                var_list=tf.get_collection(
-                    tf.GraphKeys.GLOBAL_VARIABLES,
-                    scope=tf.get_variable_scope().name
-                ),
-                max_to_keep=1000
-            )
-            self.cross_stitch_units_saver = cross_stitch_units_saver
-            self.cross_stitch_units = cross_stitch_units
+        with tf.variable_scope(task_specific_top_scope) as scope2:
+            with tf.name_scope(scope2.original_name_scope):
+                saver = tf.train.Saver(
+                    var_list=tf.get_collection(
+                        tf.GraphKeys.GLOBAL_VARIABLES,
+                        scope=tf.get_variable_scope().name
+                    ),
+                    max_to_keep=1000
+                )
+                print("var_list in task_specific_top_scope: %s" % str(
+                    tf.get_collection(
+                        tf.GraphKeys.GLOBAL_VARIABLES,
+                        scope=tf.get_variable_scope().name
+                    )
+                ))
+        with tf.variable_scope(cross_stitch_scope) as cs_scope1:
+            with tf.name_scope(cs_scope1.original_name_scope):
+                cross_stitch_units_saver = tf.train.Saver(
+                    var_list=tf.get_collection(
+                        tf.GraphKeys.GLOBAL_VARIABLES,
+                        scope=tf.get_variable_scope().name
+                    ),
+                    max_to_keep=1000
+                )
+                self.cross_stitch_units_saver = cross_stitch_units_saver
+                self.cross_stitch_units = cross_stitch_units
+                print("var_list in cross_stitch_scope: %s" % str(
+                    tf.get_collection(
+                        tf.GraphKeys.GLOBAL_VARIABLES,
+                        scope=tf.get_variable_scope().name
+                    )
+                ))
         return logits, weights, biases, saver
 
     @staticmethod
@@ -128,10 +145,10 @@ class CrossStitch(SharedBottom):
         return output, [cross_stitch_units]
 
     def _train_full_split_saver(self):
-        op_savers = [self.saver, self.bottom_saver, self.task_specific_top_saver, self.cross_stitch_units_saver]
+        op_savers = [self.bottom_saver, self.task_specific_top_saver, self.cross_stitch_units_saver, self.saver]
         save_path_prefixs = list(map(
             lambda x: self.model_name + x,
-            ["", "_bottom", "_task_specific_top", "_cross_stitch_units"]
+            ["_bottom", "_task_specific_top", "_cross_stitch_units", ""]
         ))
         return op_savers, save_path_prefixs
 
