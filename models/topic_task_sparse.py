@@ -138,10 +138,10 @@ class TopicTaskSparse(SharedBottom):
             print("optim retored from %s" % save_path_optim)
 
     def _train_full_split_saver(self):
-        op_savers = [self.saver, self.bottom_saver, self.task_specific_top_saver, self.optim_saver]
+        op_savers = [self.bottom_saver, self.task_specific_top_saver, self.optim_saver, self.saver]
         save_path_prefixs = list(map(
             lambda x: self.model_name + x,
-            ["", "_bottom", "_task_specific_top", "_optim"]
+            ["_bottom", "_task_specific_top", "_optim", ""]
         ))
         return op_savers, save_path_prefixs
 
