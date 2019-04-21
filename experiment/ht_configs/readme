@@ -1,0 +1,11 @@
+# base model ht #
+run ../experiment/hyperparameter_tuning.py
+--ht_config_file="../experiment/ht_configs/shared_bottom_config.json" \
+--<kwargs>
+cp ../ht_log/<data_name>/shared_bottom/_best_hps_config.json ../ht_configs/<data_name>/shared_bottom_config.json
+# other models ht #
+run ../experiment/hyperparameter_tuning.py \
+--ht_config_file="../experiment/ht_configs/<data_name>/shared_bottom_config.json" \
+--ht_config_file_additional="../experiment/ht_configs/<Model>_config.json" \
+--<kwargs>
+cp ../ht_log/<data_name>/<Model>/_best_hps_config.json ../ht_configs/<data_name>/<Model>_config.json
