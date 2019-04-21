@@ -275,7 +275,7 @@ def dict_update(
                 print("new  '%s': %s" % (key_name, str(dict_new[key_name])))
                 raise RuntimeError
             if isinstance(dict_base[key_name], dict):
-                dict_updated[key_name] = dict_conservative_update(
+                dict_updated[key_name] = dict_update(
                     dict_base=dict_base[key_name],
                     dict_new=dict_new[key_name]
                 )
