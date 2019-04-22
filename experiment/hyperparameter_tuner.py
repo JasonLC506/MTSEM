@@ -124,9 +124,9 @@ class HyperparameterTuner(object):
         perfs = np.array(list(self.id2perf.values()))
         ids = np.array(list(self.id2perf.keys()))
         if max_best:
-            argbest = np.argmax
+            argbest = np.nanargmax
         else:
-            argbest = np.argmin
+            argbest = np.nanargmin
         best_ind = argbest(perfs[:, primary_index], axis=0)
         best_id = ids[best_ind]
         best_hps = self.out_pattern(
