@@ -127,9 +127,9 @@ def result2perf(result):
     }
     :return:
     """
-    perf_primary = result["valid_best"][0][0][0]
+    perf_primary = result["valid_best"]["perf"]
     perf_train_final = result["training_final"][0][0][0]
-    perf_additionals = []
+    perf_additionals = [result["valid_best"]["results"][0][0][0]]
     best_epoch = result["best_epoch"]
     perf = [perf_primary, perf_train_final] + perf_additionals + [best_epoch]
     return perf
