@@ -195,51 +195,28 @@ class TopicTaskSparse(SharedBottom):
         eta = learning_rate * regularization_lambda
         epsilon = eta * reciprocal_stable_factor
         weight_update_ops = []
-        weight_shapes = []
-        weight_reshaped_list = []
-        weight_reshaped_shapes = []
         for weight_origin in weight_list:
             weight = weight_reshape_to_norm(weight_origin)
             weight_shape = list(map(
                 lambda x: x.value,
                 weight.shape
             ))
-            weight_shapes.append(weight_shape)
             weight_reshaped = tf.reshape(
                 weight,
                 shape=(weight_shape[0], weight_shape[1], -1)
             )
-            weight_reshaped_list.append(weight_reshaped)
-            weight_reshaped_shapes.append(
-                list(map(lambda x: x.value, weight_reshaped.shape))
+            weight_inner_norm = tf.norm(
+                weight_reshaped,
+                ord='euclidean',
+                axis=-1,
+                keepdims=True
             )
-        weight_reshaped_combined = tf.concat(
-            values=weight_reshaped_list,
-            axis=-1
-        )
-        # proximal update #
-        weight_inner_norm = tf.norm(
-            weight_reshaped_combined,
-            ord='euclidean',
-            axis=-1,
-            keepdims=True
-        )
-        weight_inner_norm_stabled = weight_inner_norm + epsilon
-        weight_new_reshaped_combined = tf.clip_by_value(
-            1.0 - eta / weight_inner_norm_stabled,
-            clip_value_min=0.0,
-            clip_value_max=1.0  # no effect
-        ) * weight_reshaped_combined
-
-        weight_new_reshaped_list = tf.split(
-            value=weight_new_reshaped_combined,
-            num_or_size_splits=list(map(lambda x: x[-1], weight_reshaped_shapes)),
-            axis=-1
-        )
-        for i in range(len(weight_new_reshaped_list)):
-            weight_new_reshaped = weight_new_reshaped_list[i]
-            weight_shape = weight_shapes[i]
-            weight_origin = weight_list[i]
+            weight_inner_norm_stabled = weight_inner_norm + epsilon
+            weight_new_reshaped = tf.clip_by_value(
+                1.0 - eta / weight_inner_norm_stabled,
+                clip_value_min=0.0,
+                clip_value_max=1.0             # no effect
+            ) * weight_reshaped
             weight_new = tf.reshape(
                 weight_new_reshaped,
                 shape=weight_shape,
