@@ -111,16 +111,37 @@ def mutliclass2multitask(
     return data
 
 
+def data_crop(
+        features,
+        labels,
+        label_dim,
+        n_sample_p_label,
+        random_shuffle=True
+):
+    label_instance_ind = []
+    for label in range(label_dim):
+        instance_ind = np.argwhere(labels == label).squeeze()
+        if random_shuffle:
+            np.random.shuffle(instance_ind)
+        label_instance_ind.append(instance_ind[:n_sample_p_label])
+    label_instance_ind = np.concatenate(label_instance_ind)
+    features_cropped = features[label_instance_ind]
+    labels_cropped = labels[label_instance_ind]
+    return features_cropped, labels_cropped
+
+
 class ArgParse(object):
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("-dd", "--data_dir", default="C:/Users/jpz5181/Documents/GitHub/MTSEM/data/MNIST")
         parser.add_argument("-pnc", "--pca_n_components", default=64, type=int)
-        parser.add_argument("-np", "--n_pos", default=900, type=int)
-        parser.add_argument("-nnl", "--n_neg_l", default=100, type=int)
+        parser.add_argument("-nspl", "--n_sample_p_label", default=200, type=int)
+        parser.add_argument("-np", "--n_pos", default=20, type=int)
+        parser.add_argument("-nnl", "--n_neg_l", default=20, type=int)
         parser.add_argument("-ld", "--label_dim", default=10, type=int)
         parser.add_argument("-rs", '--random_shuffle', default=True, action="store_false")
-        parser.add_argument("-dn", '--dir_name', type=str, default="../data/MNIST_MTL")
+        parser.add_argument("-s", "--seed", default=2019, type=int)
+        parser.add_argument("-dn", '--dir_name', type=str, default="../data/MNIST_MTL_imba")
         self.parser = parser
 
     def parse_args(self):
@@ -131,12 +152,20 @@ if __name__ == "__main__":
     from mnist import MNIST
     from sklearn.decomposition import PCA
     args = ArgParse().parse_args()
+    np.random.seed(args.seed)
     mndata = MNIST(args.data_dir)
     images, labels = mndata.load_training()
     images = np.array(images, dtype=np.float32)
     pca = PCA(n_components=args.pca_n_components)
     images = pca.fit_transform(images)
     labels = np.array(labels, dtype=np.int8)
+    images, labels = data_crop(
+        features=images,
+        labels=labels,
+        label_dim=args.label_dim,
+        n_sample_p_label=args.n_sample_p_label,
+        random_shuffle=args.random_shuffle
+    )
     data = mutliclass2multitask(
         features=images,
         labels=labels,
