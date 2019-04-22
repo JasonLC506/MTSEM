@@ -1,5 +1,14 @@
 """
 generate synthetic data based on topic-task-sparse assumption
+nonlinear following
+@inproceedings{ma2018modeling,
+  title={Modeling task relationships in multi-task learning with multi-gate mixture-of-experts},
+  author={Ma, Jiaqi and Zhao, Zhe and Yi, Xinyang and Chen, Jilin and Hong, Lichan and Chi, Ed H},
+  booktitle={Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery \& Data Mining},
+  pages={1930--1939},
+  year={2018},
+  organization={ACM}
+}
 """
 import numpy as np
 from scipy import special
@@ -21,17 +30,21 @@ class topicTaskSparse(object):
             sigma_wg=0.5,
             sigma_x0=1.0,
             sigma_xg=1.0,
-            sigma_y=1.0
+            sigma_y=1.0,
+            nonlinear_dim=5,
+            sigma_nonlinear=0.01
     ):
         """
         :param T:  # tasks
         :param G:  # topics
         :param M:  # special tasks in each topic
-        :param sigma_w0: # stddev of global weights
-        :param sigma_wg: # stddev of weights of special tasks
-        :param sigma_x0: # stddev of cluster centers of features
-        :param sigma_xg: # stddev of within-cluster features
-        :param sigma_y:  # stddev of y given x, w
+        :param sigma_w0: stddev of global weights
+        :param sigma_wg: stddev of weights of special tasks
+        :param sigma_x0: stddev of cluster centers of features
+        :param sigma_xg: stddev of within-cluster features
+        :param sigma_y:  stddev of y given x, w
+        :param nonlinear_dim: # nonlinear bases
+        :param sigma_nonlinear: stddev of nonlinear scale and bias
         """
         self.pars = {
             "T": T,
@@ -42,6 +55,8 @@ class topicTaskSparse(object):
             "sigma_x0": sigma_x0,
             "sigma_xg": sigma_xg,
             "sigma_y": sigma_y,
+            "nonlinear_dim": nonlinear_dim,
+            "sigma_nonlinear": sigma_nonlinear,
             "random_seed": 0
         }
         self.variable = dict()
@@ -96,12 +111,24 @@ class topicTaskSparse(object):
             specials.append(special_indices)
         w_gt = np.array(w_gt)
         specials = np.array(specials)
+        alpha = np.random.normal(
+            loc=0.0,
+            scale=self.pars["sigma_nonlinear"],
+            size=self.pars["nonlinear_dim"]
+        )
+        beta = np.random.normal(
+            loc=0.0,
+            scale=self.pars["sigma_nonlinear"],
+            size=self.pars["nonlinear_dim"]
+        )
 
         self.variable = {
             "w0": w0,
             "theta_g": theta_g,
             "w_gt": w_gt,
-            "specials": specials
+            "specials": specials,
+            "alpha": alpha,
+            "beta": beta
         }
 
         if verbose:
@@ -136,11 +163,16 @@ class topicTaskSparse(object):
                     size=[n_gt] + self.pars["x_shape"]
                 )
                 w_gt = self.variable["w0"] + self.variable["w_gt"][g, t]
-                y_gt = np.tensordot(
+                y_gt_ = np.tensordot(
                     a=x_gt,
                     b=w_gt,
                     axes=(1, 0)
-                ) + np.random.normal(
+                )
+                y_gt = 0.0
+                for nd in range(self.pars["nonlinear_dim"]):
+                    y_gt += np.sin(y_gt_ * self.variable["alpha"][nd] + self.variable["beta"][nd])
+                y_gt += y_gt_
+                y_gt += np.random.normal(
                     loc=0.0,
                     scale=self.pars['sigma_y'],
                     size=[n_gt] + y_shape
@@ -201,18 +233,20 @@ class ArgParse(object):
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("-T", "--T", type=int, default=12)
-        parser.add_argument("-G", "--G", type=int, default=3)
+        parser.add_argument("-G", "--G", type=int, default=4)
         parser.add_argument("-M", "--M", type=int, default=1)
         parser.add_argument("-sw0", "--sigma_w0", type=float, default=1.0)
         parser.add_argument("-swg", "--sigma_wg", type=float, default=0.5)
         parser.add_argument("-sx0", "--sigma_x0", type=float, default=1.0)
         parser.add_argument("-sxg", "--sigma_xg", type=float, default=1.0)
         parser.add_argument("-sy", "--sigma_y", type=float, default=1.0)
+        parser.add_argument("-nd", "--nonlinear_dim", type=int, default=5)
+        parser.add_argument("-sn", "--sigma_nonlinear", type=float, default=0.01)
         parser.add_argument("-xd", "--x_dim", type=int, default=64)
         parser.add_argument("-yd", "--y_dim", type=int, default=5)
         parser.add_argument("-rs", "--random_seed", type=int, default=2019)
         parser.add_argument("-v", "--verbose", default=True, action="store_false")
-        parser.add_argument("-n_gt", "--n_gt", type=int, default=500)
+        parser.add_argument("-n_gt", "--n_gt", type=int, default=1000)
         parser.add_argument("-dn", "--dir_name", type=str, default="../data/synthetic_topic_task_sparse")
         self.parser = parser
 
@@ -230,7 +264,9 @@ if __name__ == "__main__":
         sigma_wg=args.sigma_wg,
         sigma_x0=args.sigma_x0,
         sigma_xg=args.sigma_xg,
-        sigma_y=args.sigma_y
+        sigma_y=args.sigma_y,
+        nonlinear_dim=args.nonlinear_dim,
+        sigma_nonlinear=args.sigma_nonlinear
     )
     synthesizer.generate_variable(
         x_shape=[args.x_dim],
