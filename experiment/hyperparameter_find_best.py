@@ -34,7 +34,7 @@ def ht_find_best(
         ht.restore(
             perfs_file=ht_perf_file
         )
-    print(ht.find_best())
+    print(ht.find_best(max_best=True))
 
 
 class ArgParse(object):
