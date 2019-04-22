@@ -62,8 +62,10 @@ class StageWiseSample(DataGeneratorTrainTest):
             valid_ratio=0.0
         )
         self.sample_rate = sample_rate
-        self.output_pattern = "_sampled_%d" % int(100 * sample_rate)
-        self.output_pattern_remain = "_remained_%d" % int(100 * (1 - sample_rate))
+        # self.output_pattern = "_sampled_%d" % int(100 * sample_rate)
+        # self.output_pattern_remain = "_remained_%d" % int(100 * (1 - sample_rate))
+        self.output_pattern = "_test"
+        self.output_pattern_remain = "_train"
         self.inputs = [feature_file, label_file, task_file]
         self.outputs = self.outputs_remain = []
 
@@ -98,9 +100,9 @@ class StageWiseSample(DataGeneratorTrainTest):
 if __name__ == "__main__":
     data_dir = "../data/MNIST_MTL_imba/"
     sampler = StageWiseSample(
-        feature_file=data_dir + "feature_remained_75",
-        label_file=data_dir + "label_remained_75",
-        task_file=data_dir + "id_remained_75",
+        feature_file=data_dir + "feature_train",
+        label_file=data_dir + "label_train",
+        task_file=data_dir + "id_train",
         sample_rate=0.3333333
     )
     sampler.sample()
