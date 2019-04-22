@@ -10,12 +10,12 @@ from models import SharedBottom
 from common import StochasticGradientDescentOptimizer
 
 
-class TopicTaskSparse(SharedBottom):
+class TopicTaskSparseLayerWise(SharedBottom):
     def __init__(
             self,
             **kwargs
     ):
-        super(TopicTaskSparse, self).__init__(**kwargs)
+        super(TopicTaskSparseLayerWise, self).__init__(**kwargs)
 
     def _setup_task_specific_top(
             self,
@@ -37,7 +37,7 @@ class TopicTaskSparse(SharedBottom):
                     axis=1,                            # logits_.shape = (batch_size, topic_dim * task_dim, out_dim)
                     dims=[self.model_spec["topic_dim"], self.task_dim]
                 )
-            topic_task_logtis_, topic_task_weights, topic_task_biases, topic_task_saver = \
+            _topic_task_logits_, topic_task_weights, topic_task_biases, topic_task_saver = \
                 self._setup_task_specific_block(
                     feature=feature,
                     task_dim=self.model_spec["topic_dim"] * self.task_dim,
@@ -45,16 +45,25 @@ class TopicTaskSparse(SharedBottom):
                     out_dim=self.label_dim,
                     scope="topic_task_block_"
                 )
-            topic_task_logits = logits_topic_task_unflatten(topic_task_logtis_)
+            # topic_task_logits = logits_topic_task_unflatten(topic_task_logits_)
 
             # global block #
-            global_logits, global_weights, global_biases, global_saver = self._setup_task_specific_block(
+            _global_logits, global_weights, global_biases, global_saver = self._setup_task_specific_block(
                 feature=feature,
                 task_dim=1,
                 model_spec=self.model_spec,
                 out_dim=self.label_dim,
                 scope="global_block_"
             )           # with task_dim = 1
+
+            topic_task_logits_ = self._combine_task_specific_block(
+                feature=feature,
+                weights=[topic_task_weights, global_weights],
+                biases=[topic_task_biases, global_biases],
+                model_spec=self.model_spec,
+                scope="combine_task_specific_block"
+            )
+            topic_task_logits = logits_topic_task_unflatten(topic_task_logits_)
 
             # gate block #
             gate_logits_, gate_weights, gate_biases = self.tf_task_specific_dense(
@@ -77,7 +86,7 @@ class TopicTaskSparse(SharedBottom):
                 topic_task_logits,
                 gate
             )    # shape=(batch_size, task_dim, label_dim)
-            logits = average_topic_task_logits + self.model_spec["global_block_weight"] * global_logits
+            logits = average_topic_task_logits
 
             self.topic_task_weight_list = topic_task_weights
             self.topic_task_bias_list = topic_task_biases
@@ -125,7 +134,7 @@ class TopicTaskSparse(SharedBottom):
             self,
             **kwargs
     ):
-        super(TopicTaskSparse, self).partial_restore(**kwargs)
+        super(TopicTaskSparseLayerWise, self).partial_restore(**kwargs)
         if "save_path_optim" in kwargs:
             save_path_optim = kwargs["save_path_optim"]
         else:
@@ -136,6 +145,63 @@ class TopicTaskSparse(SharedBottom):
                 save_path=save_path_optim
             )
             print("optim retored from %s" % save_path_optim)
+
+    @staticmethod
+    def _combine_task_specific_block(
+            feature,
+            weights,
+            biases,
+            model_spec,
+            scope="combine_task_specific_block"
+    ):
+        """
+        combine task and global block layer-wise
+        mimicking the layers in super._setup_task_specific_block
+        :param feature:
+        :param weights: [task_weights, global_weights]
+        :param biases: [task_biases, global_biases]
+        :param model_spec:
+        :param scope:
+        :return:
+        """
+        with tf.variable_scope(scope):
+            task_dim = weights[0][0].shape[0].value
+            task_ones = tf.ones(shape=[task_dim])
+            feature_task_expanded = tf.einsum(
+                "ik,j->ijk",
+                feature,
+                task_ones
+            )
+            weights_combined = []
+            biases_combined = []
+            for i in range(len(weights[0])):
+                weights_combined.append(
+                    weights[0][i] + weights[1][i]
+                )
+                biases_combined.append(
+                    biases[0][i] + biases[1][i]
+                )
+            # in the special case only two layers: len(weights_combined) == 2 #
+            hidden_a = tf.einsum(
+                "ijk,jlk->ijl",
+                feature_task_expanded,
+                weights_combined[0]
+            )
+            hidden_a = hidden_a + biases_combined[0]
+            if model_spec["activation"] is not None:
+                hidden_a = model_spec["activation"](hidden_a)
+            hidden_a_dropout = tf.layers.dropout(
+                hidden_a,
+                rate=model_spec["dropout_task_hidden_a"],
+                name="task_hidden_a_dropout"
+            )
+            logits = tf.einsum(
+                "ijk,jlk->ijl",
+                hidden_a_dropout,
+                weights_combined[1]
+            )
+            logits = logits + biases_combined[1]
+        return logits
 
     def _train_full_split_saver(self):
         op_savers = [self.bottom_saver, self.task_specific_top_saver, self.optim_saver, self.saver]
@@ -228,7 +294,7 @@ class TopicTaskSparse(SharedBottom):
         weight_new_reshaped_combined = tf.clip_by_value(
             1.0 - eta / weight_inner_norm_stabled,
             clip_value_min=0.0,
-            clip_value_max=1.0  # no effect
+            clip_value_max=1.0             # no effect
         ) * weight_reshaped_combined
 
         weight_new_reshaped_list = tf.split(

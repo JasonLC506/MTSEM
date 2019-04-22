@@ -8,6 +8,7 @@ from models.cross_stitch import CrossStitch
 from models.mmoe import MMoE
 from models.multilinear_relationship_network import MultilinearRelationshipNetwork
 from models.topic_task_sparse import TopicTaskSparse
+from models.topic_task_sparse_layer_wise import TopicTaskSparseLayerWise
 
 
 Models = {
@@ -18,5 +19,6 @@ Models = {
     'cross_stitch': CrossStitch,
     "mmoe": MMoE,
     "multilinear_relationship_network": MultilinearRelationshipNetwork,
-    "topic_task_sparse": TopicTaskSparse
+    "topic_task_sparse": TopicTaskSparse,
+    "topic_task_sparse_layer_wise": TopicTaskSparseLayerWise
 }
