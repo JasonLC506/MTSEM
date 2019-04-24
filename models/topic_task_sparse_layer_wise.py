@@ -90,6 +90,8 @@ class TopicTaskSparseLayerWise(SharedBottom):
 
             self.topic_task_weight_list = topic_task_weights
             self.topic_task_bias_list = topic_task_biases
+            self.global_weight_list = global_weights
+            self.global_bias_list = global_biases
             weights = topic_task_weights + global_weights + gate_weights
             biases = topic_task_biases + global_biases + gate_biases
 
@@ -100,6 +102,7 @@ class TopicTaskSparseLayerWise(SharedBottom):
                 ),
                 max_to_keep=1000
             )
+            self._setup_variable_verbose()
         return logits, weights, biases, saver
 
     def _setup_optim(self):
@@ -202,6 +205,40 @@ class TopicTaskSparseLayerWise(SharedBottom):
             )
             logits = logits + biases_combined[1]
         return logits
+
+    def _setup_variable_verbose(self):
+        def weight_reshape_to_norm(weight_origin):
+            weight_topic_task = self.dim_unflatten(
+                weight=weight_origin,
+                axis=0,
+                dims=[self.model_spec["topic_dim"], self.task_dim]
+            )
+            return weight_topic_task
+
+        weights_norm = {}
+        weights_norm_l0 = {}
+        for weight in self.topic_task_weight_list + self.topic_task_bias_list:
+            print("weight in sparsity regularization: %s" % weight.name)
+            weight_reshaped = weight_reshape_to_norm(weight)
+            weight_norm = tf.norm(
+                tf.reshape(weight_reshaped, [self.model_spec["topic_dim"], self.task_dim, -1]),
+                ord="euclidean",
+                axis=-1
+            )
+            weights_norm[weight.name] = weight_norm
+            weights_norm_l0[weight.name] = tf.math.count_nonzero(weight_norm)
+        self.weights_norm = weights_norm
+        self.weights_norm_l0 = weights_norm_l0
+
+        weights_norm_global = {}
+        for weight in self.global_weight_list + self.global_bias_list:
+            weight_norm = tf.norm(
+                tf.reshape(weight, [1, -1]),
+                ord="euclidean",
+                axis=-1
+            )
+            weights_norm_global[weight.name] = weight_norm
+        self.weights_norm_global = weights_norm_global
 
     def _train_full_split_saver(self):
         op_savers = [self.bottom_saver, self.task_specific_top_saver, self.optim_saver, self.saver]
@@ -358,3 +395,14 @@ class TopicTaskSparseLayerWise(SharedBottom):
             shape=weight_shape_new
         )
         return weight_reshaped
+
+    def _op_epoch_verbose(self):
+        return [
+            self.weights_norm,
+            self.weights_norm_l0,
+            self.weights_norm_global
+        ]
+
+
+
+

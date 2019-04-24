@@ -78,7 +78,8 @@ class NN(object):
             op_savers=None,
             save_path_prefixs=["NN"],
             data_generator_valid=None,
-            log_board_dir=None
+            log_board_dir=None,
+            op_epoch_verbose=None
     ):
         """
         mini-batch training
@@ -95,10 +96,11 @@ class NN(object):
         :param save_path_prefixs: prefix for save path
         :param data_generator_valid: valid data generator
         :param log_board_dir: directory for log_board save, None for not save
+        :param op_epoch_verbose: values to verbose at the end of each epoch
         :return:
         """
         start = datetime.now()
-        steps = 0                                               # counting global SGD parameter update steps
+        steps = 0  # counting global SGD parameter update steps
         epoch_losses = []
         data_sizes = []
         if log_board_dir is not None:
@@ -114,7 +116,7 @@ class NN(object):
                     batch_size_true = data_batched[data_key].shape[0]
                     break
                 feed_dict = fn_feed_dict(data_batched, batch_index=np.arange(batch_size_true))
-                op_update = fn_op_update(steps)          # generates op_update given global steps
+                op_update = fn_op_update(steps)  # generates op_update given global steps
                 fetch = [op_optimizer] + op_losses
                 if op_data_size is not None:
                     fetch.append(op_data_size)
@@ -148,13 +150,13 @@ class NN(object):
                 valid_losses = NN._train_w_generator(
                     data_generator=data_generator_valid,
                     fn_feed_dict=fn_feed_dict,
-                    op_optimizer=op_losses[0],                           # making op_optimizer ineffective
+                    op_optimizer=op_losses[0],  # making op_optimizer ineffective
                     op_losses=op_losses,
                     session=session,
                     op_data_size=op_data_size,
                     fn_op_update=lambda x: None,
                     batch_size=batch_size,
-                    max_epoch=1,                                    # only need 1 epoch to cal loss
+                    max_epoch=1,  # only need 1 epoch to cal loss
                     verbose=False
                 )
                 epoch_losses_valid, data_sizes_valid = valid_losses
@@ -167,7 +169,7 @@ class NN(object):
             log_board.write(step=epoch)
             message = "epoch %d takes %fs, loss: %s, \n with data_sizes: %s" % (
                 epoch,
-                (end-start).total_seconds(),
+                (end - start).total_seconds(),
                 str(epoch_losses),
                 str(data_sizes)
             )
@@ -190,6 +192,10 @@ class NN(object):
                             sess=session,
                             save_path=save_path
                         )
+                if op_epoch_verbose is not None:
+                    epoch_verbose_values = session.run(op_epoch_verbose)
+                    with open(log_path, "a") as logf:
+                        logf.write(str(epoch_verbose_values) + "\n")
             start = end
         return epoch_losses, data_sizes
 

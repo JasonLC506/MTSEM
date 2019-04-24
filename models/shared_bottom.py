@@ -149,6 +149,7 @@ class SharedBottom(NN):
             fn_feed_dict=self._fn_feed_dict_train,
             op_optimizer=self.optimizer,
             op_losses=[self.loss, self.loss_cross_entropy, self.loss_cross_entropy_task],
+            op_epoch_verbose=self._op_epoch_verbose(),
             session=self.sess,
             op_data_size=self.weight_sum_task,
             fn_op_update=self._fn_op_update_train,
@@ -183,6 +184,9 @@ class SharedBottom(NN):
         return feed_dict
 
     def _fn_op_update_train(self, steps):
+        return None
+
+    def _op_epoch_verbose(self):
         return None
 
     def predict(
