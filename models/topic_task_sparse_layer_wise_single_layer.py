@@ -113,8 +113,8 @@ class TopicTaskSparseLayerWiseSingleLayer(TopicTaskSparseLayerWise):
             self.topic_task_bias_list = topic_task_biases
             self.global_weight_list = global_weights
             self.global_bias_list = global_biases
-            weights = topic_task_weights + global_weights + gate_weights + logits_weights
-            biases = topic_task_biases + global_biases + gate_biases + logits_biases
+            weights = global_weights + gate_weights + logits_weights
+            biases = global_biases + gate_biases + logits_biases
 
             saver = tf.train.Saver(
                 var_list=tf.get_collection(

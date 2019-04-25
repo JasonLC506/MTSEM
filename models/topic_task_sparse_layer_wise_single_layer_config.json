@@ -6,6 +6,7 @@
   "task_hidden_a_dimension": 32,
   "dropout_task_hidden_a": 0.0,
   "sparse_regularization_lambda": 0.1,
+  "regularization_l2": 0.0,
   "global_block_weight": 1.0,
   "optim_params": "config_file: ../common/stochastic_gradient_descent_optimizer_config.json",
   "batch_size": 512,
