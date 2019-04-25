@@ -1,7 +1,8 @@
 {
   "model_spec": {
-    "n_experts": {"hp_options": [1, 2, 4, 8]},
-    "expert_dimension": {"hp_options": [4, 8, 16, 32]},
+    "topic_dim": {"hp_options": [1, 2, 4, 8, 16]},
+    "sparse_regularization_lambda": {"hp_options": [0.0, 0.00001, 0.0001, 0.001, 0.01, 0.1]},
+    "global_block_weight": 1.0,
     "task_hidden_a_dimension": {"hp_options": [4, 8, 16, 32, 64]},
     "dropout_task_hidden_a": {"hp_options": [0.0]},
     "regularization_l2": {"hp_options": [0.0, 0.01, 0.1, 1.0]},

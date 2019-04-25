@@ -20,6 +20,7 @@ def run(
         valid_ratio=0,
         stage_wise=True,
         num_repeats=1,
+        test_sample=False,
         **model_kwargs_wrap
 ):
     """
@@ -53,20 +54,26 @@ def run(
     model_kwargs = model_kwargs_wrap["model_kwargs"]
     model_primary_kwargs = model_kwargs_wrap["model_primary_kwargs"]
     for i_run in range(num_repeats):
-        test_sampler = StageWiseSample(
-            feature_file=feature_file,
-            label_file=label_file,
-            task_file=task_file,
-            sample_rate=1 - train_ratio - valid_ratio
-        )
-        test_sampler.sample()
-        print("done test sampling")
+        if test_sample:
+            test_sampler = StageWiseSample(
+                feature_file=feature_file,
+                label_file=label_file,
+                task_file=task_file,
+                sample_rate=1 - train_ratio - valid_ratio
+            )
+            test_sampler.sample()
+            print("done test sampling")
+            train_pattern = test_sampler.output_pattern_remain
+            test_pattern = test_sampler.output_pattern
+        else:
+            train_pattern = "_train"
+            test_pattern = "_test"
         # initialize data #
         data = DataGeneratorTrainTest(
-            feature_file=feature_file + test_sampler.output_pattern_remain,
-            label_file=label_file + test_sampler.output_pattern_remain,
-            weight_file=weight_file if weight_file is None else weight_file + test_sampler.output_pattern_remain,
-            task_file=task_file if task_file is None else task_file + test_sampler.output_pattern_remain,
+            feature_file=feature_file + train_pattern,
+            label_file=label_file + train_pattern,
+            weight_file=weight_file if weight_file is None else weight_file + train_pattern,
+            task_file=task_file if task_file is None else task_file + train_pattern,
             train_ratio=train_ratio / (train_ratio + valid_ratio),
             valid_ratio=valid_ratio / (train_ratio + valid_ratio),
             stage_wise=stage_wise
@@ -113,10 +120,10 @@ def run(
 
         # test #
         data_test = DataGeneratorFull(
-            feature_file=feature_file + test_sampler.output_pattern,
-            label_file=label_file + test_sampler.output_pattern,
-            weight_file=weight_file if weight_file is None else weight_file + test_sampler.output_pattern,
-            task_file=task_file if task_file is None else task_file + test_sampler.output_pattern,
+            feature_file=feature_file + test_pattern,
+            label_file=label_file + test_pattern,
+            weight_file=weight_file if weight_file is None else weight_file + test_pattern,
+            task_file=task_file if task_file is None else task_file + test_pattern,
             topic_file=topic_file,
             weight_task=True
         )
@@ -200,16 +207,16 @@ def train_model(
 class ArgParse(object):
     def __init__(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument("-dd", "--data_dir", default="../data/")
+        parser.add_argument("-dd", "--data_dir", default="../data/MNIST_MTL/")
         parser.add_argument('-md', "--model_dir", default="../models/")
 
         # parser.add_argument("-ff", "--feature_file", default="posts_content_all_features_[CLS]_SUM_joined_sampled_20")
-        parser.add_argument("-ff", "--feature_file", default="MNIST_MTL/feature")
+        parser.add_argument("-ff", "--feature_file", default="feature")
         # parser.add_argument("-lf", "--label_file", default="posts_reactions_all_joined_sampled_20")
-        parser.add_argument("-lf", "--label_file", default="MNIST_MTL/label")
+        parser.add_argument("-lf", "--label_file", default="label")
         parser.add_argument("-wf", "--weight_file", default=None)
         # parser.add_argument("-tf", "--task_file", default="posts_content_all_text_ids_joined_sampled_20")
-        parser.add_argument("-tf", "--task_file", default="MNIST_MTL/id")
+        parser.add_argument("-tf", "--task_file", default="id")
         parser.add_argument("--topic_file", default=None)
         parser.add_argument("-tr", "--train_ratio", default=0.7, type=float)
         parser.add_argument("-vr", "--valid_ratio", default=0.1, type=float)
@@ -231,6 +238,7 @@ class ArgParse(object):
         parser.add_argument("-mnp", "--model_name_primary", default="cross_stitch_primary")
         parser.add_argument("-fssp", "--full_split_saver_primary", default=False, action="store_true")
         parser.add_argument("-nr", "--num_repeats", default=1, type=int)
+        parser.add_argument("-ts", "--test_sample", default=False, action="store_true")
         self.parser = parser
 
     def parse_args(self):

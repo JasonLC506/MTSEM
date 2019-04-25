@@ -5,13 +5,9 @@
     "covariance_epsilon": 0.00001,
     "matrix_inverse_singular_value_threshold": 0.1,
     "matrix_inverse_trace_threshold": 3000.0,
-    "task_hidden_a_dimension": {"hp_options": [16, 32]},
-    "dropout_task_hidden_a": {"hp_options": [0.0, 0.1, 0.2]},
-    "regularization_l2": {"hp_options": [0.0, 0.1, 1.0]},
-    "optim_params": {
-      "learning_rate": {"hp_options": [0.001, 0.01, 0.1]},
-      "decay_steps": 100,
-      "decay_rate": {"hp_options": [0.9, 0.8]}
-    }
+    "task_hidden_a_dimension": {"hp_options": [4, 8, 16, 32, 64]},
+    "dropout_task_hidden_a": {"hp_options": [0.0]},
+    "regularization_l2": {"hp_options": [0.0, 0.01, 0.1, 1.0]},
+    "optim_params": "config_file: ../experiment/ht_configs/stochastic_gradient_descent_optimizer_config.json"
   }
 }
