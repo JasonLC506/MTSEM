@@ -81,8 +81,11 @@ class TopicTaskSparse(SharedBottom):
 
             self.topic_task_weight_list = topic_task_weights
             self.topic_task_bias_list = topic_task_biases
-            weights = topic_task_weights + global_weights + gate_weights
-            biases = topic_task_biases + global_biases + gate_biases
+            weights = topic_task_weights + global_weights
+            biases = topic_task_biases + global_biases
+            if self.model_spec["topic_dim"] > 1.5:     # only when topic_dim > 1, otherwise zero values cause NaN issue
+                weights += gate_weights
+                biases += gate_biases
 
             saver = tf.train.Saver(
                 var_list=tf.get_collection(

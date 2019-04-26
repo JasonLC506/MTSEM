@@ -113,8 +113,11 @@ class TopicTaskSparseLayerWiseSingleLayer(TopicTaskSparseLayerWise):
             self.topic_task_bias_list = topic_task_biases
             self.global_weight_list = global_weights
             self.global_bias_list = global_biases
-            weights = global_weights + gate_weights + logits_weights
-            biases = global_biases + gate_biases + logits_biases
+            weights = global_weights + logits_weights
+            biases = global_biases + logits_biases
+            if self.model_spec["topic_dim"] > 1.5:     # only when topic_dim > 1, otherwise zero values cause NaN issue
+                weights += gate_weights
+                biases += gate_biases
 
             saver = tf.train.Saver(
                 var_list=tf.get_collection(
@@ -176,3 +179,32 @@ class TopicTaskSparseLayerWiseSingleLayer(TopicTaskSparseLayerWise):
                 name="task_hidden_a_dropout"
             )
         return hidden_a_dropout
+
+
+if __name__ == "__main__":
+    from experiment import DataGeneratorTrainTest, json_reader
+    data_dir = "../data/MNIST_MTL/"
+    data = DataGeneratorTrainTest(
+        feature_file=data_dir + "feature_train",
+        label_file=data_dir + "label_train",
+        weight_file=None,
+        task_file=data_dir + "id_train",
+        train_ratio=0.8,
+        valid_ratio=0.2,
+        stage_wise=True
+    )
+    data_train = data.train
+    model_spec = json_reader("../models/topic_task_sparse_layer_wise_single_layer_config.json")
+    model = TopicTaskSparseLayerWiseSingleLayer(
+        feature_dim=data_train.feature_dim,
+        label_dim=data_train.label_dim,
+        task_dim=data_train.task_dim,
+        model_spec=model_spec,
+        model_name="topic_task_sparse_layer_wise_single_layer_MNIST_MTL_nan_test"
+    )
+    model.initialization()
+    model.restore(save_path="../ckpt/topic_task_sparse_layer_wise_single_layer_MNIST_MTL_nan_test/epoch_087")
+    for weight in model.task_weight_list + model.task_bias_list:
+        print(weight.name)
+        print(model.sess.run(weight))
+
