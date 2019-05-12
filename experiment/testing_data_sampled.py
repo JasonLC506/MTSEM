@@ -80,11 +80,11 @@ class StageWiseSample(DataGeneratorTrainTest):
         # write into files #
         self.outputs = list(map(lambda x: x + self.output_pattern, self.inputs))
         self.outputs_remain = list(map(lambda x: x + self.output_pattern_remain, self.inputs))
-        self.inputs = list(map(lambda x: open(x, 'r'), self.inputs))
+        input_files = list(map(lambda x: open(x, 'r'), self.inputs))
         self.outputs = list(map(lambda x: open(x, 'w'), self.outputs))
         self.outputs_remain = list(map(lambda x: open(x, 'w'), self.outputs_remain))
         for cnt in range(self.data_size):
-            lines = list(map(lambda x: x.readline(), self.inputs))
+            lines = list(map(lambda x: x.readline(), input_files))
             if len(sample_index) > 0 and cnt == sample_index[0]:
                 sample_index.pop(0)
                 for i in range(len(lines)):
@@ -92,8 +92,8 @@ class StageWiseSample(DataGeneratorTrainTest):
             else:
                 for i in range(len(lines)):
                     self.outputs_remain[i].write(lines[i])
-        for i in range(len(self.inputs)):
-            self.inputs[i].close()
+        for i in range(len(input_files)):
+            input_files[i].close()
             self.outputs[i].close()
             self.outputs_remain[i].close()
         self.outputs = list(map(lambda x: x + self.output_pattern, self.inputs))
