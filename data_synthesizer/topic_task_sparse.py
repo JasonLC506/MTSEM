@@ -236,7 +236,7 @@ class ArgParse(object):
         parser.add_argument("-G", "--G", type=int, default=4)
         parser.add_argument("-M", "--M", type=int, default=1)
         parser.add_argument("-sw0", "--sigma_w0", type=float, default=1.0)
-        parser.add_argument("-swg", "--sigma_wg", type=float, default=0.5)
+        parser.add_argument("-swg", "--sigma_wg", type=float, default=0.1)
         parser.add_argument("-sx0", "--sigma_x0", type=float, default=1.0)
         parser.add_argument("-sxg", "--sigma_xg", type=float, default=1.0)
         parser.add_argument("-sy", "--sigma_y", type=float, default=1.0)

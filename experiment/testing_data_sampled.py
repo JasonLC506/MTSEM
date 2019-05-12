@@ -98,11 +98,11 @@ class StageWiseSample(DataGeneratorTrainTest):
 
 
 if __name__ == "__main__":
-    data_dir = "../data/synthetic_topic_task_sparse/"
+    data_dir = "../data/SEM/"
     sampler = StageWiseSample(
         feature_file=data_dir + "feature_train",
         label_file=data_dir + "label_train",
         task_file=data_dir + "id_train",
-        sample_rate=0.33333333
+        sample_rate=0.2
     )
     sampler.sample()
