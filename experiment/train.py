@@ -63,7 +63,8 @@ def run(
                 feature_file=feature_file,
                 label_file=label_file,
                 task_file=task_file,
-                sample_rate=1 - train_ratio - valid_ratio
+                sample_rate=1 - train_ratio - valid_ratio,
+                prefix=model_kwargs["model_name"]
             )
             test_sampler.sample()
             print("done test sampling")
@@ -149,6 +150,10 @@ def run(
             )
             print("testing output: %s" % str(results))
         results_run.append(results['perf'])
+        # clean temporarily generated data #
+        if test_sample:
+            for file in test_sampler.outputs + test_sampler.outputs_remain:
+                os.remove(file)
     results_run = np.array(results_run)
     print("results:\n %s" % str(results_run))
     print("best_epochs:\n %s" % str(np.array(best_epoch_run)))
@@ -158,6 +163,7 @@ def run(
     with open(result_file, "a") as f:
         f.write("perf: %s" % str(np.nanmean(results_run, axis=0)))
         f.write("std: %s" % str(np.nanstd(results_run, axis=0)))
+
 
 
 def init_model(

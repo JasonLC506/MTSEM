@@ -52,7 +52,8 @@ class StageWiseSample(DataGeneratorTrainTest):
             feature_file,
             label_file,
             task_file,
-            sample_rate=0.2
+            sample_rate=0.2,
+            prefix=""
     ):
         super(StageWiseSample, self).__init__(
             feature_file=feature_file,
@@ -64,8 +65,8 @@ class StageWiseSample(DataGeneratorTrainTest):
         self.sample_rate = sample_rate
         # self.output_pattern = "_sampled_%d" % int(100 * sample_rate)
         # self.output_pattern_remain = "_remained_%d" % int(100 * (1 - sample_rate))
-        self.output_pattern = "_test"
-        self.output_pattern_remain = "_train"
+        self.output_pattern = "_test" + prefix
+        self.output_pattern_remain = "_train" + prefix
         self.inputs = [feature_file, label_file, task_file]
         self.outputs = self.outputs_remain = []
 
@@ -95,6 +96,8 @@ class StageWiseSample(DataGeneratorTrainTest):
             self.inputs[i].close()
             self.outputs[i].close()
             self.outputs_remain[i].close()
+        self.outputs = list(map(lambda x: x + self.output_pattern, self.inputs))
+        self.outputs_remain = list(map(lambda x: x + self.output_pattern_remain, self.inputs))
 
 
 if __name__ == "__main__":
