@@ -64,7 +64,7 @@ def run(
                 label_file=label_file,
                 task_file=task_file,
                 sample_rate=1 - train_ratio - valid_ratio,
-                prefix=model_kwargs["model_name"]
+                prefix=model_kwargs["model_name"].replace("/", "__")
             )
             test_sampler.sample()
             print("done test sampling")
