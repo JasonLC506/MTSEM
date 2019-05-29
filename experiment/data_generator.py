@@ -177,7 +177,7 @@ class DataGeneratorFull(DataGeneratorBase):
             topic_file=None
     ):
         if task_file is None:
-            tasks = np.zeros(self.data_size, dtype=np.int8)
+            tasks = np.zeros(self.data_size, dtype=np.int32)
             self.tasks_size = 1
             # self.tasks_dictionary = {None: 0}
         else:
@@ -213,7 +213,7 @@ class DataGeneratorFull(DataGeneratorBase):
                     cPickle.dump(tasks_dictionary, tdf)
             print("task dictionary: %s" % str(tasks_dictionary))
             tasks = list(map(lambda x: tasks_dictionary[x], tasks))
-            tasks = np.array(tasks, dtype=np.int8)
+            tasks = np.array(tasks, dtype=np.int32)
             self.tasks_size = len(tasks_list)
         # one-hot encoding #
         identity = np.eye(self.tasks_size, dtype=np.float32)
