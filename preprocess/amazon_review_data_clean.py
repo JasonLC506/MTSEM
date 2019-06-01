@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 
 def extract_user_data(user_file):
@@ -95,16 +96,38 @@ def save_as_data(
         print("task: '%s': %d" % (task_id, task_id_count[task_id]))
 
 
+def label_transform(label_file):
+    """
+    from int 1-5 scale to 2 classes
+    """
+    dist_count = dict()
+    with open(label_file, 'r') as f:
+        with open(label_file + "_transformed", 'w') as tf:
+            for line in f:
+                score = int(line.rstrip())
+                dist_count.setdefault(score, 0)
+                dist_count[score] += 1
+                if score <= 3:
+                    label = [1.0, 0.0]
+                else:
+                    label = [0.0, 1.0]
+                tf.write(','.join(list(map(str, label))) + "\n")
+    print(dist_count)
+
+
 if __name__ == "__main__":
-    users_data = extract_users_data("../data/Amazon_review/Users")
-    task_id_count = count_task(
-        users_data=users_data,
-        task_identifier='category'
-    )
-    save_as_data(
-        users_data=users_data,
-        target_dir="../data/Amazon_review/",
-        task_identifier='category',
-        task_id_count=task_id_count,
-        task_id_count_threshold=1000
-    )
+    # users_data = extract_users_data("../data/Amazon_review/Users")
+    # task_id_count = count_task(
+    #     users_data=users_data,
+    #     task_identifier='user_id'
+    # )
+    # print(np.histogram(list(task_id_count.values())))
+    # save_as_data(
+    #     users_data=users_data,
+    #     target_dir="../data/Amazon_review/raw_user_task",
+    #     task_identifier='user_id',
+    #     task_id_count=task_id_count,
+    #     task_id_count_threshold=70
+    # )
+
+    label_transform(label_file='../data/Amazon_review/raw_user_task/label')
