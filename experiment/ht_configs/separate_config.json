@@ -1,0 +1,9 @@
+{
+  "model_spec": {
+    "name": "Separate",
+    "task_hidden_a_dimension": {"hp_options": [4, 8, 16, 32, 64]},
+    "dropout_task_hidden_a": {"hp_options": [0.0]},
+    "regularization_l2": {"hp_options": [0.0, 0.01, 0.1, 1.0]},
+    "optim_params": "config_file: ../experiment/ht_configs/stochastic_gradient_descent_optimizer_config.json"
+  }
+}
