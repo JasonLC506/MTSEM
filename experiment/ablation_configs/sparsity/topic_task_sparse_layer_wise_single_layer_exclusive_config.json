@@ -1,0 +1,25 @@
+{
+  "model_spec": {
+    "activation": "relu",
+    "batch_size": 512,
+    "bottom": {
+      "activation": "relu",
+      "dropout_feature": 0.1,
+      "dropout_hidden": 0.2,
+      "hidden_dimension": 64
+    },
+    "dropout_task_hidden_a": 0.0,
+    "global_block_weight": 1.0,
+    "max_epoch": 100,
+    "name": "SharedBottom",
+    "optim_params": {
+      "decay_rate": 0.8,
+      "decay_steps": 1000,
+      "learning_rate": 0.1
+    },
+    "regularization_l2": 0.01,
+    "sparse_regularization_lambda": {"hp_options": [0.0, 0.00001, 0.0001, 0.001, 0.01, 0.1]},
+    "task_hidden_a_dimension": 32,
+    "topic_dim": 4
+  }
+}
