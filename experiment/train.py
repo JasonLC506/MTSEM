@@ -146,7 +146,8 @@ def run(
             )
             results = simple_evaluate(
                 model=model,
-                data=data_test
+                data=data_test,
+                per_task=True
             )
             print("testing output: %s" % str(results))
         results_run.append(results['perf'])
@@ -161,8 +162,14 @@ def run(
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
     with open(result_file, "a") as f:
-        f.write("perf: %s" % str(np.nanmean(results_run, axis=0)))
-        f.write("std: %s" % str(np.nanstd(results_run, axis=0)))
+        f.write("perf: %s\n" % ",".join(list(map(
+            str,
+            np.nanmean(results_run, axis=0).tolist()
+        ))))
+        f.write("std: %s\n" % ",".join(list(map(
+            str,
+            np.nanstd(results_run, axis=0).tolist()
+        ))))
 
 
 
@@ -240,13 +247,13 @@ class ArgParse(object):
         parser.add_argument("-tr", "--train_ratio", default=0.8, type=float)
         parser.add_argument("-vr", "--valid_ratio", default=0.2, type=float)
         parser.add_argument("-sw", "--stage_wise", default=True, action='store_false')
-        parser.add_argument("-M", "--Model", default="topic_task_sparse_layer_wise_single_layer_exclusive")
+        parser.add_argument("-M", "--Model", default="shared_bottom")
         parser.add_argument("-cf", "--config_file", default="config.json")
         parser.add_argument("-rp", "--restore_path", default=None)
         parser.add_argument("-rpb", "--restore_path_bottom", default=None)
         parser.add_argument("-rpt", "--restore_path_top", default=None)
         parser.add_argument("-rpr", "--restore_path_regularization", default=None)
-        parser.add_argument("-mn", "--model_name", default="topic_task_sparse_layer_wise_single_layer_exclusive_MNIST_MTL")
+        parser.add_argument("-mn", "--model_name", default="MNIST_MTL_TEST_SHARED_BOTTOM")
         parser.add_argument("-fss", "--full_split_saver", default=False, action="store_true")
         parser.add_argument("-Mp", "--Model_primary", default=None)
         parser.add_argument("-cfp", "--config_file_primary", default="config.json")
@@ -256,7 +263,7 @@ class ArgParse(object):
         parser.add_argument("-rprp", "--restore_path_regularization_primary", default=None)
         parser.add_argument("-mnp", "--model_name_primary", default="cross_stitch_primary")
         parser.add_argument("-fssp", "--full_split_saver_primary", default=False, action="store_true")
-        parser.add_argument("-nr", "--num_repeats", default=1, type=int)
+        parser.add_argument("-nr", "--num_repeats", default=2, type=int)
         parser.add_argument("-ts", "--test_sample", default=False, action="store_true")
         self.parser = parser
 
