@@ -22,6 +22,7 @@ class ArgParse(object):
         parser = argparse.ArgumentParser()
         parser.add_argument("-sd", "--source_dir", default="../ht_log/MNIST_MTL")
         parser.add_argument("-td", "--target_dir", default="../configs/MNIST_MTL")
+        parser.add_argument("-p", "--pattern", default=None)
         self.parser = parser
 
     def parse_args(self):
@@ -30,12 +31,17 @@ class ArgParse(object):
 
 if __name__ == "__main__":
     args = ArgParse().parse_args()
+    print(args.pattern)
     if not os.path.exists(args.target_dir):
         os.makedirs(args.target_dir)
     for fn in os.listdir(args.source_dir):
         if fn not in Models:
             print("'%s' is not a valid model name" % fn)
             continue
+        if args.pattern:
+            if fn not in args.pattern.split(','):
+                print("'%s' is not in defined pattern" % fn)
+                continue
         filename = os.path.join(args.source_dir, fn, "_best_hp.json")
         filename_target = os.path.join(args.target_dir, fn + "_config.json")
         read_and_dump(
