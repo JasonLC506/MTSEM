@@ -11,13 +11,13 @@
   "max_epoch": 100,
   "name": "SharedBottom",
   "optim_params": {
-    "decay_rate": 0.9,
-    "decay_steps": 100,
+    "decay_rate": 0.8,
+    "decay_steps": 1000,
     "learning_rate": 1.0
   },
   "primary_model_ckpt": "../ckpt/shared_bottom_MNIST_MTL/epoch_099",
   "regularization_l2": 0.0,
-  "task_hidden_a_dimension": 32,
+  "task_hidden_a_dimension": 16,
   "tensor_decomposition_eps_or_k": 0.1,
   "tensor_decomposition_method": "Tucker"
 }
