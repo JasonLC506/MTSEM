@@ -85,7 +85,7 @@ def loglikelihood(
         trues,
         tasks=None
 ):
-    llh = np.tensordot(trues, -np.log(preds), axes=((0,1), (0,1)))
+    llh = np.tensordot(trues, -np.log(preds), axes=((0,1), (0,1))) / (1.0 * trues.shape[0])
     if tasks is None:
         return llh
     else:
