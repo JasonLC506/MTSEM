@@ -15,5 +15,5 @@
     "decay_steps": 1000,
     "learning_rate": 0.1
   },
-  "task_hidden_a_dimension": 64
+  "task_hidden_a_dimension": 32
 }

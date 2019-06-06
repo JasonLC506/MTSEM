@@ -17,7 +17,7 @@
     "learning_rate": 0.1
   },
   "regularization_l2": 0.0,
-  "sparse_regularization_lambda": 0.0,
-  "task_hidden_a_dimension": 16,
-  "topic_dim": 8
+  "sparse_regularization_lambda": 0.001,
+  "task_hidden_a_dimension": 32,
+  "topic_dim": 2
 }

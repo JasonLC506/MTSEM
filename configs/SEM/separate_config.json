@@ -16,5 +16,5 @@
     "learning_rate": 1.0
   },
   "regularization_l2": 0.0,
-  "task_hidden_a_dimension": 16
+  "task_hidden_a_dimension": 32
 }

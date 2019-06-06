@@ -13,11 +13,11 @@
   "name": "SharedBottom",
   "optim_params": {
     "decay_rate": 0.9,
-    "decay_steps": 1000,
-    "learning_rate": 0.1
+    "decay_steps": 100,
+    "learning_rate": 1.0
   },
   "regularization_l2": 0.0,
-  "sparse_regularization_lambda": 0.0001,
+  "sparse_regularization_lambda": 1e-05,
   "task_hidden_a_dimension": 64,
   "topic_dim": 1
 }
