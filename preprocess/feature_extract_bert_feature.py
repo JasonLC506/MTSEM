@@ -88,10 +88,10 @@ def test_output(output_file):
 
 
 if __name__ == "__main__":
-    # feature_extract(
-    #     feature_file="../bert-master/output/features_posts_content_all.json",
-    #     output_file="../data/posts_content_all_features",
-    #     tokens="[CLS]",
-    #     aggregation="SUM"
-    # )
-    test_output(output_file="../data/posts_content_all_features" + "_[CLS]" + "_SUM")
+    feature_extract(
+        feature_file="C:\\Users\\jpz5181\\Documents\\GitHub\\MTSEM\\bert-master\\output\\Amazon_review_features_content.json",
+        output_file="C:\\Users\\jpz5181\\Documents\\GitHub\\MTSEM\\data\\Amazon_review\\raw_user_task\\feature",
+        tokens="[CLS]",
+        aggregation="SUM"
+    )
+    # test_output(output_file="../data/posts_content_all_features" + "_[CLS]" + "_SUM")
