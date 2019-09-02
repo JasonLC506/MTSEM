@@ -138,12 +138,12 @@ class topicTaskSparse(object):
 
     def generate_data(
             self,
-            n_gt,
+            n_t,
             y_shape=None
     ):
         """
         generate data
-        :param n_gt: number of samples per topic per task
+        :param n_t: number of samples per task
         :param y_shape: shape of y, if None, default list(w_shape[-1]), currently for multi-class classification
         :return:
         """
@@ -155,37 +155,52 @@ class topicTaskSparse(object):
         if y_shape is None:
             y_shape = [self.pars['w_shape'][-1]]
         data_size_bynow = 0
-        for g in range(self.pars["G"]):
-            for t in range(self.pars["T"]):
-                x_gt = np.random.normal(
-                    loc=self.variable["theta_g"][g],
-                    scale=self.pars["sigma_xg"],
-                    size=[n_gt] + self.pars["x_shape"]
-                )
-                w_gt = self.variable["w0"] + self.variable["w_gt"][g, t]
-                y_gt_ = np.tensordot(
-                    a=x_gt,
-                    b=w_gt,
-                    axes=(1, 0)
-                )
-                y_gt = 0.0
-                for nd in range(self.pars["nonlinear_dim"]):
-                    y_gt += np.sin(y_gt_ * self.variable["alpha"][nd] + self.variable["beta"][nd])
-                y_gt += y_gt_
-                y_gt += np.random.normal(
-                    loc=0.0,
-                    scale=self.pars['sigma_y'],
-                    size=[n_gt] + y_shape
-                )
-                y_gt = special.softmax(y_gt, axis=-1)
-                sample_id = np.arange(n_gt) + data_size_bynow
+        for t in range(self.pars["T"]):
+            x_t = np.random.normal(
+                loc=0.0,
+                scale=self.pars["sigma_x0"],
+                size=[n_t] + self.pars["x_shape"]
+            )
+            g_dist = np.expand_dims(x_t, axis=1) - np.expand_dims(self.variable["theta_g"], axis=0)
+            g_dist = special.softmax(
+                np.power(
+                    np.linalg.norm(
+                        g_dist,
+                        axis=-1
+                    ) / self.pars["sigma_xg"],
+                    2.0
+                ),
+                axis=-1
+            )
+            w_gt = np.expand_dims(self.variable["w0"], axis=0) + self.variable["w_gt"][:, t]
+            w_t = np.tensordot(
+                a=g_dist,
+                b=w_gt,
+                axes=(-1, 0)
+            )
+            y_t_ = np.einsum(
+                "ij,ijk->ik",
+                x_t,
+                w_t
+            )
+            y_t = 0.0
+            for nd in range(self.pars["nonlinear_dim"]):
+                y_t += np.sin(y_t_ * self.variable["alpha"][nd] + self.variable["beta"])
+            y_t += y_t_
+            y_t += np.random.normal(
+                loc=0.0,
+                scale=self.pars['sigma_y'],
+                size=[n_t] + y_shape
+            )
+            y_t = special.softmax(y_t, axis=-1)
+            sample_id = np.arange(n_t) + data_size_bynow
 
-                for i in range(n_gt):
-                    data["feature"].append(x_gt[i])
-                    data["label"].append(y_gt[i])
-                    data["id"].append("t%d_g%d_%d" % (t, g, sample_id[i]))
+            for i in range(n_t):
+                data["feature"].append(x_t[i])
+                data["label"].append(y_t[i])
+                data["id"].append("t%d_g%s_%d" % (t, str(g_dist[i]), sample_id[i]))
 
-                data_size_bynow += n_gt
+            data_size_bynow += n_t
         return data
 
 
@@ -234,9 +249,9 @@ class ArgParse(object):
         parser = argparse.ArgumentParser()
         parser.add_argument("-T", "--T", type=int, default=12)
         parser.add_argument("-G", "--G", type=int, default=4)
-        parser.add_argument("-M", "--M", type=int, default=1)
+        parser.add_argument("-M", "--M", type=int, default=3)
         parser.add_argument("-sw0", "--sigma_w0", type=float, default=1.0)
-        parser.add_argument("-swg", "--sigma_wg", type=float, default=0.1)
+        parser.add_argument("-swg", "--sigma_wg", type=float, default=0.5)
         parser.add_argument("-sx0", "--sigma_x0", type=float, default=1.0)
         parser.add_argument("-sxg", "--sigma_xg", type=float, default=1.0)
         parser.add_argument("-sy", "--sigma_y", type=float, default=1.0)
@@ -246,8 +261,8 @@ class ArgParse(object):
         parser.add_argument("-yd", "--y_dim", type=int, default=5)
         parser.add_argument("-rs", "--random_seed", type=int, default=2019)
         parser.add_argument("-v", "--verbose", default=True, action="store_false")
-        parser.add_argument("-n_gt", "--n_gt", type=int, default=1000)
-        parser.add_argument("-dn", "--dir_name", type=str, default="../data/synthetic_topic_task_sparse")
+        parser.add_argument("-n_t", "--n_t", type=int, default=2000)
+        parser.add_argument("-dn", "--dir_name", type=str, default="../data/synthetic_topic_task_sparse_v2")
         self.parser = parser
 
     def parse_args(self):
@@ -275,7 +290,7 @@ if __name__ == "__main__":
         verbose=args.verbose
     )
     data = synthesizer.generate_data(
-        n_gt=args.n_gt
+        n_t=args.n_t
     )
     write2file(
         data=data,

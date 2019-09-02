@@ -70,6 +70,12 @@ class HyperparameterTuner(object):
 
         # build id2hps #
         self._hps_build()
+
+        # restore from existing results #
+        if os.path.exists(self.save_path_perfs):
+            self.restore(
+                perfs_file=self.save_path_perfs
+            )
         return self
 
     def _hps_build(self):
@@ -101,6 +107,9 @@ class HyperparameterTuner(object):
         if end_id is None:
             end_id = len(self.id2hps)
         for id_ in range(start_id, min([end_id, len(self.id2hps)])):
+            if id_ in self.id2perf:
+                if len(self.id2perf[id_]) > 0:  # valid perf
+                    continue
             hps = self.id2hps[id_]
             hps_config = self.out_pattern(
                 keys=self.hp_names,

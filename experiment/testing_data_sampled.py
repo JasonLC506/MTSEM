@@ -52,7 +52,8 @@ class StageWiseSample(DataGeneratorTrainTest):
             feature_file,
             label_file,
             task_file,
-            sample_rate=0.2
+            sample_rate=0.2,
+            prefix=""
     ):
         super(StageWiseSample, self).__init__(
             feature_file=feature_file,
@@ -64,8 +65,8 @@ class StageWiseSample(DataGeneratorTrainTest):
         self.sample_rate = sample_rate
         # self.output_pattern = "_sampled_%d" % int(100 * sample_rate)
         # self.output_pattern_remain = "_remained_%d" % int(100 * (1 - sample_rate))
-        self.output_pattern = "_test"
-        self.output_pattern_remain = "_train"
+        self.output_pattern = "_test" + prefix
+        self.output_pattern_remain = "_train" + prefix
         self.inputs = [feature_file, label_file, task_file]
         self.outputs = self.outputs_remain = []
 
@@ -79,11 +80,11 @@ class StageWiseSample(DataGeneratorTrainTest):
         # write into files #
         self.outputs = list(map(lambda x: x + self.output_pattern, self.inputs))
         self.outputs_remain = list(map(lambda x: x + self.output_pattern_remain, self.inputs))
-        self.inputs = list(map(lambda x: open(x, 'r'), self.inputs))
+        input_files = list(map(lambda x: open(x, 'r'), self.inputs))
         self.outputs = list(map(lambda x: open(x, 'w'), self.outputs))
         self.outputs_remain = list(map(lambda x: open(x, 'w'), self.outputs_remain))
         for cnt in range(self.data_size):
-            lines = list(map(lambda x: x.readline(), self.inputs))
+            lines = list(map(lambda x: x.readline(), input_files))
             if len(sample_index) > 0 and cnt == sample_index[0]:
                 sample_index.pop(0)
                 for i in range(len(lines)):
@@ -91,18 +92,20 @@ class StageWiseSample(DataGeneratorTrainTest):
             else:
                 for i in range(len(lines)):
                     self.outputs_remain[i].write(lines[i])
-        for i in range(len(self.inputs)):
-            self.inputs[i].close()
+        for i in range(len(input_files)):
+            input_files[i].close()
             self.outputs[i].close()
             self.outputs_remain[i].close()
+        self.outputs = list(map(lambda x: x + self.output_pattern, self.inputs))
+        self.outputs_remain = list(map(lambda x: x + self.output_pattern_remain, self.inputs))
 
 
 if __name__ == "__main__":
-    data_dir = "../data/synthetic_topic_task_sparse/"
+    data_dir = "../data/synthetic_topic_task_sparse_v3/"
     sampler = StageWiseSample(
         feature_file=data_dir + "feature_train",
         label_file=data_dir + "label_train",
         task_file=data_dir + "id_train",
-        sample_rate=0.33333333
+        sample_rate=0.2
     )
     sampler.sample()

@@ -1,7 +1,8 @@
 import argparse
 import numpy as np
+import os
 
-from experiment import DataGeneratorTrainTest, DataGeneratorFull, StageWiseSample
+from experiment import DataGeneratorTrainTest, DataGeneratorFull, StageWiseSample, simple_evaluate
 from models import Models
 from experiment import json_reader, dict_conservative_update
 from common.readlogboard import read
@@ -21,6 +22,7 @@ def run(
         stage_wise=True,
         num_repeats=1,
         test_sample=False,
+        result_file="../result/test_result",
         **model_kwargs_wrap
 ):
     """
@@ -34,6 +36,8 @@ def run(
     :param valid_ratio:
     :param stage_wise:
     :param num_repeats:
+    :param test_sample:
+    :param result_file:
     :param model_kwargs_wrap: {
         "model_kwargs": {
             Model:
@@ -59,7 +63,8 @@ def run(
                 feature_file=feature_file,
                 label_file=label_file,
                 task_file=task_file,
-                sample_rate=1 - train_ratio - valid_ratio
+                sample_rate=1 - train_ratio - valid_ratio,
+                prefix=model_kwargs["model_name"].replace("/", "__")
             )
             test_sampler.sample()
             print("done test sampling")
@@ -139,14 +144,33 @@ def run(
             model.restore(
                 save_path=model_best_save_path.format(int(best_epoch))
             )
-            results = model.test(
-                data_generator=data_test
+            results = simple_evaluate(
+                model=model,
+                data=data_test,
+                per_task=True
             )
             print("testing output: %s" % str(results))
-        results_run.append(results)
-
-    print("results:\n %s" % str(np.array(results_run)))
+        results_run.append(results['perf'])
+        # clean temporarily generated data #
+        if test_sample:
+            for file in test_sampler.outputs + test_sampler.outputs_remain:
+                os.remove(file)
+    results_run = np.array(results_run)
+    print("results:\n %s" % str(results_run))
     print("best_epochs:\n %s" % str(np.array(best_epoch_run)))
+    result_dir = "/".join(result_file.split("/")[:-1])
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
+    with open(result_file, "a") as f:
+        f.write("perf: %s\n" % ",".join(list(map(
+            str,
+            np.nanmean(results_run, axis=0).tolist()
+        ))))
+        f.write("std: %s\n" % ",".join(list(map(
+            str,
+            np.nanstd(results_run, axis=0).tolist()
+        ))))
+
 
 
 def init_model(
@@ -209,6 +233,8 @@ class ArgParse(object):
         parser = argparse.ArgumentParser()
         parser.add_argument("-dd", "--data_dir", default="../data/MNIST_MTL/")
         parser.add_argument('-md', "--model_dir", default="../models/")
+        parser.add_argument("-cd", "--config_dir", default="../configs/")
+        parser.add_argument("-rd", "--result_dir", default="../result/")
 
         # parser.add_argument("-ff", "--feature_file", default="posts_content_all_features_[CLS]_SUM_joined_sampled_20")
         parser.add_argument("-ff", "--feature_file", default="feature")
@@ -218,16 +244,16 @@ class ArgParse(object):
         # parser.add_argument("-tf", "--task_file", default="posts_content_all_text_ids_joined_sampled_20")
         parser.add_argument("-tf", "--task_file", default="id")
         parser.add_argument("--topic_file", default=None)
-        parser.add_argument("-tr", "--train_ratio", default=0.7, type=float)
-        parser.add_argument("-vr", "--valid_ratio", default=0.1, type=float)
+        parser.add_argument("-tr", "--train_ratio", default=0.8, type=float)
+        parser.add_argument("-vr", "--valid_ratio", default=0.2, type=float)
         parser.add_argument("-sw", "--stage_wise", default=True, action='store_false')
-        parser.add_argument("-M", "--Model", default="topic_task_sparse_layer_wise")
+        parser.add_argument("-M", "--Model", default="shared_bottom")
         parser.add_argument("-cf", "--config_file", default="config.json")
         parser.add_argument("-rp", "--restore_path", default=None)
         parser.add_argument("-rpb", "--restore_path_bottom", default=None)
         parser.add_argument("-rpt", "--restore_path_top", default=None)
         parser.add_argument("-rpr", "--restore_path_regularization", default=None)
-        parser.add_argument("-mn", "--model_name", default="topic_task_sparse_layer_wise_MNIST_MTL_test")
+        parser.add_argument("-mn", "--model_name", default="MNIST_MTL_TEST_SHARED_BOTTOM")
         parser.add_argument("-fss", "--full_split_saver", default=False, action="store_true")
         parser.add_argument("-Mp", "--Model_primary", default=None)
         parser.add_argument("-cfp", "--config_file_primary", default="config.json")
@@ -237,7 +263,7 @@ class ArgParse(object):
         parser.add_argument("-rprp", "--restore_path_regularization_primary", default=None)
         parser.add_argument("-mnp", "--model_name_primary", default="cross_stitch_primary")
         parser.add_argument("-fssp", "--full_split_saver_primary", default=False, action="store_true")
-        parser.add_argument("-nr", "--num_repeats", default=1, type=int)
+        parser.add_argument("-nr", "--num_repeats", default=2, type=int)
         parser.add_argument("-ts", "--test_sample", default=False, action="store_true")
         self.parser = parser
 
@@ -258,9 +284,11 @@ if __name__ == "__main__":
         valid_ratio=args.valid_ratio,
         stage_wise=args.stage_wise,
         num_repeats=args.num_repeats,
+        test_sample=args.test_sample,
+        result_file=args.result_dir + args.model_name,
         model_kwargs=dict(
             Model=Models[args.Model],
-            config_file=args.model_dir + args.Model + "_" + args.config_file,
+            config_file=args.config_dir + args.data_dir[8:] + args.Model + "_" + args.config_file,
             restore_path=args.restore_path,
             partial_restore_paths={
                 "save_path_bottom": args.restore_path_bottom,
@@ -272,7 +300,7 @@ if __name__ == "__main__":
         ),
         model_primary_kwargs=None if args.Model_primary is None else dict(
             Model=Models[args.Model_primary],
-            config_file=args.model_dir + args.Model_primary + "_" + args.config_file,
+            config_file=args.config_dir + args.data_dir[8:] + args.Model_primary + "_" + args.config_file,
             restore_path=args.restore_path_primary,
             partial_restore_paths={
                 "save_path_bottom": args.restore_path_bottom_primary,

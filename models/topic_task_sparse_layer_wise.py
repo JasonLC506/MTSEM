@@ -280,7 +280,17 @@ class TopicTaskSparseLayerWise(SharedBottom):
         return op_proximal_operator
 
     @staticmethod
+    def proximal_operator(
+            weight,
+            **kwargs
+    ):
+        return proximal_operator_element_sparse(
+            weight=weight,
+            **kwargs
+        )
+
     def _setup_proximal_operator(
+            self,
             weight_list,
             learning_rate,
             regularization_lambda,
@@ -324,18 +334,11 @@ class TopicTaskSparseLayerWise(SharedBottom):
             axis=-1
         )
         # proximal update #
-        weight_inner_norm = tf.norm(
-            weight_reshaped_combined,
-            ord='euclidean',
-            axis=-1,
-            keepdims=True
+        weight_new_reshaped_combined = self.proximal_operator(
+            weight=weight_reshaped_combined,
+            eta=eta,
+            epsilon=epsilon
         )
-        weight_inner_norm_stabled = weight_inner_norm + epsilon
-        weight_new_reshaped_combined = tf.clip_by_value(
-            1.0 - eta / weight_inner_norm_stabled,
-            clip_value_min=0.0,
-            clip_value_max=1.0             # no effect
-        ) * weight_reshaped_combined
 
         weight_new_reshaped_list = tf.split(
             value=weight_new_reshaped_combined,
@@ -407,5 +410,30 @@ class TopicTaskSparseLayerWise(SharedBottom):
         ]
 
 
-
-
+def proximal_operator_element_sparse(
+        weight,
+        eta,
+        epsilon,
+        **kwargs
+):
+    """
+    calculate proximal operator for element sparse regularization
+    :param weight: shape=[..., inner_dim]
+    :param eta: learning_rate * regularization_lambda
+    :param epsilon: stabilisation term
+    :param kwargs:
+    :return:
+    """
+    weight_inner_norm = tf.norm(
+        weight,
+        ord='euclidean',
+        axis=-1,
+        keepdims=True
+    )
+    weight_inner_norm_stabled = weight_inner_norm + epsilon
+    weight_new = tf.clip_by_value(
+        1.0 - eta / weight_inner_norm_stabled,
+        clip_value_min=0.0,
+        clip_value_max=1.0  # no effect
+    ) * weight
+    return weight_new
