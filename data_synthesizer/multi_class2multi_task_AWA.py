@@ -21,8 +21,8 @@ class ArgParse(object):
             default=data_dir + "/AwA2-labels.txt"
         )
         parser.add_argument("-pnc", "--pca_n_components", default=500, type=int)
-        parser.add_argument("-nspl", "--n_sample_p_label", default=200, type=int)
-        parser.add_argument("-np", "--n_pos", default=100, type=int)
+        parser.add_argument("-nspl", "--n_sample_p_label", default=100, type=int)
+        parser.add_argument("-np", "--n_pos", default=20, type=int)
         parser.add_argument("-nnl", "--n_neg_l", default=2, type=int)
         parser.add_argument("-ld", "--label_dim", default=50, type=int)
         parser.add_argument("-rs", '--random_shuffle', default=True, action="store_false")
