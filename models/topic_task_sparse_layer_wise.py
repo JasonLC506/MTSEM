@@ -403,11 +403,13 @@ class TopicTaskSparseLayerWise(SharedBottom):
         return weight_reshaped
 
     def _op_epoch_verbose(self):
-        return [
-            self.weights_norm,
-            self.weights_norm_l0,
-            self.weights_norm_global
-        ]
+        #return [
+        #    self.weights_norm,
+        #    self.weights_norm_l0,
+        #    self.weights_norm_global
+        #]
+        ## for logging memory issue ##
+        return None
 
 
 def proximal_operator_element_sparse(
