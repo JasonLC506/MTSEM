@@ -1,0 +1,4 @@
+0	<function relu at 0x2ad80f9de598>|512|<function relu at 0x2ad80f9de598>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|0.0|64|4
+3	<function relu at 0x2ae9ebc34598>|512|<function relu at 0x2ae9ebc34598>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|40.0|64|4
+2	<function relu at 0x2ae64e860598>|512|<function relu at 0x2ae64e860598>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|20.0|64|4
+1	<function relu at 0x2acf61a34598>|512|<function relu at 0x2acf61a34598>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|10.0|64|4

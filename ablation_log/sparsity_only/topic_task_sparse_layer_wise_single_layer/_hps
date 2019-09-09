@@ -1,0 +1,6 @@
+4	<function relu at 0x2aeb0b69f620>|512|<function relu at 0x2aeb0b69f620>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|0.007|64|4
+2	<function relu at 0x2b53cd467620>|512|<function relu at 0x2b53cd467620>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|0.005|64|4
+0	<function relu at 0x2ac0c21c4620>|512|<function relu at 0x2ac0c21c4620>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|0.0|64|4
+1	<function relu at 0x2b9c0024b620>|512|<function relu at 0x2b9c0024b620>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|0.004|64|4
+5	<function relu at 0x2b73ef2ab620>|512|<function relu at 0x2b73ef2ab620>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|0.01|64|4
+3	<function relu at 0x2ac388638620>|512|<function relu at 0x2ac388638620>|0.1|0.2|32|0.0|1.0|100|SharedBottom|0.9|100|1.0|0.0|0.006|64|4

@@ -1,0 +1,165 @@
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 10.0, 20.0, 40.0]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2ad80f9de598>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2ad80f9de598>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 4
+testing 1/4: hps: {'model_spec': {'activation': <function relu at 0x2ad80f9de598>, 'batch_size': 512, 'bottom': {'activation': <function relu at 0x2ad80f9de598>, 'dropout_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 0.0, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 10.0, 20.0, 40.0]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2ae64e860598>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2ae64e860598>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 4
+testing 3/4: hps: {'model_spec': {'activation': <function relu at 0x2ae64e860598>, 'batch_size': 512, 'bottom': {'activation': <function relu at 0x2ae64e860598>, 'dropout_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 20.0, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {ophp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/optim_params/decay_steps': {ohp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/learning_rate': hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+9]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/regularization_l2': {options: hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/sparse_regularization_lambda':hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 10.0, 20.0, 40.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 10.0, 20.0, 40.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 10.0, 20.0, 40.0]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+t_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 10.0, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 10.0, 20.0, 40.0]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 10.0, 20.0, 40.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 10.0, 20.0, 40.0]}
+hp '/model_spec/activation': {options: [<function relu at 0x2ae9ebc34598>]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 10.0, 20.0, 40.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b1385bae598>]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2ae9ebc34598>]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b72ea331598>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b1385bae598>]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2ad633805598>]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b72ea331598>]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b56866ba598>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2ad633805598>]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b696b455598>]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b45a201f598>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b56866ba598>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b696b455598>]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b45a201f598>]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+total_ops: 4
+total_ops: 4
+total_ops: 4
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+testing 4/4: hps: {'model_spec': {'activation': <function relu at 0x2ae9ebc34598>, 'batch_size': 512, 'bottom': {'activation': <function relu at 0x2ae9ebc34598>, 'dropout_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 40.0, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+total_ops: 4
+hp '/model_spec/name': {options: ['SharedBottom']}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 4
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 4
+total_ops: 4

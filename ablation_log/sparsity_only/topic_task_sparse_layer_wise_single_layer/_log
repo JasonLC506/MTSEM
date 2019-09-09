@@ -1,0 +1,179 @@
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2aeb0b69f620>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2aeb0b69f620>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 6
+testing 5/6: hps: {'model_spec': {'activation': <function relu at 0x2aeb0b69f620>, 'batch_size': 512, 'bottom': {'activation': <function relu at 0x2aeb0b69f620>, 'dropout_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 0.007, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+at 0x2b53cd467620>]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+ion relu at 0x2b53cd467620>]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+ttom']}
+hp '/model_spec/activation': {options: [<function relu at 0x2ac0c21c4620>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2ac0c21c4620>]}
+'batch_size': 512, 'bottom': {'activation': <function relu at 0x2b53cd467620>, 'dropout_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 0.005, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 6
+testing 1/6: hps: {'model_spec': {'activation': <function relu at 0x2ac0c21c4620>, 'batch_size': 512, 'bottom': {'activation': <function relu at 0x2ac0c21c4620>, 'dropout_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 0.0, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b08cefed620>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b08cefed620>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 6
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b9c0024b620>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b9c0024b620>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 6
+testing 2/6: hps: {'model_spec': {'activation': <function relu at 0x2b9c0024b620>, 'batch_size': 512, 'bottom': {'activation': <function relu at 0x2b9c0024b620>, 'dropout_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 0.004, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b7634104620>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b7634104620>]}
+hp '/model_spec/activation': {options: [<function relu at 0x2ba8437f9620>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2ba8437f9620>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 6
+total_ops: 6
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b07a7f50620>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b07a7f50620>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 6
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2b73ef2ab620>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2b73ef2ab620>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 6
+testing 6/6: hps: {'model_spec': {'activation': <function relu at 0x2b73ef2ab620>, 'batch_size': 512, 'bottom': {'activation': <function relu at 0x2b73ef2ab620>, 'dropout_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 0.01, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
+hp '/model_spec/max_epoch': {options: [100]}
+hp '/model_spec/batch_size': {options: [512]}
+hp '/model_spec/optim_params/decay_rate': {options: [0.9]}
+hp '/model_spec/optim_params/decay_steps': {options: [100]}
+hp '/model_spec/optim_params/learning_rate': {options: [1.0]}
+hp '/model_spec/global_block_weight': {options: [1.0]}
+hp '/model_spec/regularization_l2': {options: [0.0]}
+hp '/model_spec/sparse_regularization_lambda': {options: [0.0, 0.004, 0.005, 0.006, 0.007, 0.01]}
+hp '/model_spec/dropout_task_hidden_a': {options: [0.0]}
+hp '/model_spec/task_hidden_a_dimension': {options: [64]}
+hp '/model_spec/topic_dim': {options: [4]}
+hp '/model_spec/activation': {options: [<function relu at 0x2ac388638620>]}
+hp '/model_spec/bottom/activation': {options: [<function relu at 0x2ac388638620>]}
+hp '/model_spec/bottom/hidden_dimension': {options: [32]}
+hp '/model_spec/bottom/dropout_hidden': {options: [0.2]}
+hp '/model_spec/bottom/dropout_feature': {options: [0.1]}
+hp '/model_spec/name': {options: ['SharedBottom']}
+total_ops: 6
+testing 4/6: hps: {'model_spec': {'activation': <function relu at 0x2ac388638620>, 'batch_size': 512, 'bottom': {'activation': <function relu at 0x2ac388638620>, 'dropout_feature': 0.1, 'dropout_hidden': 0.2, 'hidden_dimension': 32}, 'dropout_task_hidden_a': 0.0, 'global_block_weight': 1.0, 'max_epoch': 100, 'name': 'SharedBottom', 'optim_params': {'decay_rate': 0.9, 'decay_steps': 100, 'learning_rate': 1.0}, 'regularization_l2': 0.0, 'sparse_regularization_lambda': 0.006, 'task_hidden_a_dimension': 64, 'topic_dim': 4}}
