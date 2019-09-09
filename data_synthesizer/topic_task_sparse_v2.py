@@ -247,9 +247,9 @@ def write2file(
 class ArgParse(object):
     def __init__(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument("-T", "--T", type=int, default=12)
+        parser.add_argument("-T", "--T", type=int, default=3)
         parser.add_argument("-G", "--G", type=int, default=4)
-        parser.add_argument("-M", "--M", type=int, default=3)
+        parser.add_argument("-M", "--M", type=int, default=1)
         parser.add_argument("-sw0", "--sigma_w0", type=float, default=1.0)
         parser.add_argument("-swg", "--sigma_wg", type=float, default=0.5)
         parser.add_argument("-sx0", "--sigma_x0", type=float, default=1.0)
@@ -262,7 +262,7 @@ class ArgParse(object):
         parser.add_argument("-rs", "--random_seed", type=int, default=2019)
         parser.add_argument("-v", "--verbose", default=True, action="store_false")
         parser.add_argument("-n_t", "--n_t", type=int, default=2000)
-        parser.add_argument("-dn", "--dir_name", type=str, default="../data/synthetic_topic_task_sparse_v2")
+        parser.add_argument("-dn", "--dir_name", type=str, default="../data/synthetic_topic_task_sparse_v2_T3")
         self.parser = parser
 
     def parse_args(self):
