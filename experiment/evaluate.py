@@ -42,13 +42,7 @@ def performance(
     # one-hot to index #
     trues = labels
 
-    # perf = accuracy(
-    #     preds=preds,
-    #     trues=trues,
-    #     tasks=None if not per_task else tasks
-    # )
-
-    perf = loglikelihood(
+    perf = accuracy(
         preds=preds,
         trues=trues,
         tasks=None if not per_task else tasks
@@ -78,27 +72,3 @@ def accuracy(
         accs.append(np.sum(tasks[np.where(preds_label == trues_label)[0], :], axis=0) / np.sum(tasks, axis=0))
         accs.append(np.array([acc]))
         return np.concatenate(accs, axis=0)
-
-
-def loglikelihood(
-        preds,
-        trues,
-        tasks=None
-):
-    llh = np.tensordot(trues, -np.log(preds), axes=((0,1), (0,1))) / (1.0 * trues.shape[0])
-    if tasks is None:
-        return llh
-    else:
-        llhs = []
-        llh_samples = np.einsum(
-            'ij,ij->i',
-            trues,
-            -np.log(preds)
-        )
-        print(llh_samples.shape)
-        print(tasks.shape)
-        llhs.append(
-            np.tensordot(tasks, llh_samples, axes=(0,0)) / np.sum(tasks, axis=0)
-        )
-        llhs.append(np.array([llh]))
-        return np.concatenate(llhs, axis=0)
