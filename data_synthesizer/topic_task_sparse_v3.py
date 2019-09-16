@@ -248,7 +248,7 @@ class ArgParse(object):
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("-T", "--T", type=int, default=12)
-        parser.add_argument("-G", "--G", type=int, default=4)
+        parser.add_argument("-G", "--G", type=int, default=1)
         parser.add_argument("-M", "--M", type=int, default=3)
         parser.add_argument("-sw0", "--sigma_w0", type=float, default=1.0)
         parser.add_argument("-swg", "--sigma_wg", type=float, default=3.0)
