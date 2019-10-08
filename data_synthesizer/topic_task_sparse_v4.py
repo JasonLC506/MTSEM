@@ -302,8 +302,8 @@ if __name__ == "__main__":
     data = synthesizer.generate_data(
         n_t=args.n_t
     )
-    # write2file(
-    #     data=data,
-    #     meta_data=synthesizer.pars,
-    #     dir_name=args.dir_name
-    # )
+    write2file(
+        data=data,
+        meta_data=synthesizer.pars,
+        dir_name=args.dir_name
+    )
