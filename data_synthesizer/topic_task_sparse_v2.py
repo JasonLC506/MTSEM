@@ -41,7 +41,7 @@ class topicTaskSparse(object):
         :param sigma_w0: stddev of global weights
         :param sigma_wg: stddev of weights of special tasks
         :param sigma_x0: stddev of cluster centers of features
-        :param sigma_xg: stddev of within-cluster features
+        :param sigma_xg: stddev of the multiple Gaussian of feature distribution
         :param sigma_y:  stddev of y given x, w
         :param nonlinear_dim: # nonlinear bases
         :param sigma_nonlinear: stddev of nonlinear scale and bias

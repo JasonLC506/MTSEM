@@ -9,7 +9,6 @@ nonlinear following
   year={2018},
   organization={ACM}
 }
-single topic sparsity test
 """
 import numpy as np
 from scipy import special
@@ -30,6 +29,7 @@ class topicTaskSparse(object):
             sigma_w0=1.0,
             sigma_wg=0.5,
             sigma_x0=1.0,
+            sigma_xd=0.3,
             sigma_xg=1.0,
             sigma_y=1.0,
             nonlinear_dim=5,
@@ -42,6 +42,7 @@ class topicTaskSparse(object):
         :param sigma_w0: stddev of global weights
         :param sigma_wg: stddev of weights of special tasks
         :param sigma_x0: stddev of cluster centers of features
+        :param sigma_xd: stddev of within-cluster features
         :param sigma_xg: stddev of the multiple Gaussian of feature distribution
         :param sigma_y:  stddev of y given x, w
         :param nonlinear_dim: # nonlinear bases
@@ -54,6 +55,7 @@ class topicTaskSparse(object):
             "sigma_w0": sigma_w0,
             "sigma_wg": sigma_wg,
             "sigma_x0": sigma_x0,
+            "sigma_xd": sigma_xd,
             "sigma_xg": sigma_xg,
             "sigma_y": sigma_y,
             "nonlinear_dim": nonlinear_dim,
@@ -157,11 +159,17 @@ class topicTaskSparse(object):
             y_shape = [self.pars['w_shape'][-1]]
         data_size_bynow = 0
         for t in range(self.pars["T"]):
-            x_t = np.random.normal(
+            x_t_delt = np.random.normal(
                 loc=0.0,
-                scale=self.pars["sigma_x0"],
+                scale=self.pars["sigma_xd"],
                 size=[n_t] + self.pars["x_shape"]
             )
+            sample_g = np.random.choice(
+                self.pars["G"],
+                n_t,
+            )
+            x_t_g = self.variable["theta_g"][sample_g]
+            x_t = x_t_delt + x_t_g
             g_dist = np.expand_dims(x_t, axis=1) - np.expand_dims(self.variable["theta_g"], axis=0)
             g_dist = special.softmax(
                 - np.power(
@@ -249,12 +257,13 @@ class ArgParse(object):
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("-T", "--T", type=int, default=12)
-        parser.add_argument("-G", "--G", type=int, default=1)
+        parser.add_argument("-G", "--G", type=int, default=2)
         parser.add_argument("-M", "--M", type=int, default=3)
         parser.add_argument("-sw0", "--sigma_w0", type=float, default=1.0)
         parser.add_argument("-swg", "--sigma_wg", type=float, default=3.0)
         parser.add_argument("-sx0", "--sigma_x0", type=float, default=1.0)
-        parser.add_argument("-sxg", "--sigma_xg", type=float, default=1.0)
+        parser.add_argument("-sxd", "--sigma_xd", type=float, default=0.3)
+        parser.add_argument("-sxg", "--sigma_xg", type=float, default=0.1)
         parser.add_argument("-sy", "--sigma_y", type=float, default=1.0)
         parser.add_argument("-nd", "--nonlinear_dim", type=int, default=5)
         parser.add_argument("-sn", "--sigma_nonlinear", type=float, default=0.01)
@@ -293,8 +302,8 @@ if __name__ == "__main__":
     data = synthesizer.generate_data(
         n_t=args.n_t
     )
-    write2file(
-        data=data,
-        meta_data=synthesizer.pars,
-        dir_name=args.dir_name
-    )
+    # write2file(
+    #     data=data,
+    #     meta_data=synthesizer.pars,
+    #     dir_name=args.dir_name
+    # )
