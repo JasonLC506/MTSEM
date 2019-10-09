@@ -87,6 +87,7 @@ class TopicTaskSparseLayerWiseSingleLayer(TopicTaskSparseLayerWise):
                 gate_logits,
                 axis=-1
             )
+            self.gate = gate
 
             # gated_average #
             average_topic_task_hidden = tf.einsum(
