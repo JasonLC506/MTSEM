@@ -20,6 +20,6 @@
     "regularization_l2": 0.0,
     "sparse_regularization_lambda": {"hp_options": [0.0, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]},
     "task_hidden_a_dimension": 64,
-    "topic_dim": 2
+    "topic_dim": 3
   }
 }
