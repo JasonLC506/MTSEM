@@ -79,6 +79,7 @@ class TopicTaskSparseLayerWise(SharedBottom):
                 gate_logits,
                 axis=-1
             )
+            self.gate = gate
 
             # gated_average #
             average_topic_task_logits = tf.einsum(
@@ -135,6 +136,35 @@ class TopicTaskSparseLayerWise(SharedBottom):
                 ),
                 max_to_keep=1000
             )
+
+    def _setup_regularization(self, **kwargs):
+        """
+            add entropy of topic penalty so that the topic distribution is sharp for empirical study
+            add reconstruction loss of topic
+        """
+        regularization_loss = super(TopicTaskSparseLayerWise, self)._setup_regularization(**kwargs)
+        uniform_gate = tf.ones_like(self.gate, dtype=tf.float32) / (1.0 * self.model_spec["topic_dim"])
+        gate_smooth = 0.9 * self.gate + 0.1 * uniform_gate
+        topic_entropy_loss = - tf.einsum(
+            "ij,ij->i",
+            gate_smooth,
+            tf.math.log(gate_smooth)
+        )
+        topic_entropy_loss_mean = tf.reduce_mean(topic_entropy_loss)
+        topic_entropy_regularization = 0.1
+        regularization_loss += (topic_entropy_regularization * topic_entropy_loss_mean)
+        # reconstruction loss #
+        feature_target = tf.layers.dense(
+            self.gate,
+            units=self.feature_dim,
+            kernel_initializer=tf.truncated_normal_initializer(stddev=0.02),
+            name="feature_target"
+        ) # warning: trainable variable defined outside of _setup_net()
+        reconstruction_loss = tf.reduce_sum(tf.math.square(feature_target - self.feature), axis=-1) 
+        reconstruction_loss_mean = tf.reduce_mean(reconstruction_loss)
+        reconstruction_regularization = 0.1
+        regularization_loss += (reconstruction_regularization * reconstruction_loss_mean)
+        return regularization_loss
 
     def partial_restore(
             self,
@@ -408,6 +438,8 @@ class TopicTaskSparseLayerWise(SharedBottom):
             self.weights_norm_l0,
             self.weights_norm_global
         ]
+        ## for logging memory issue ##
+        # return None
 
 
 def proximal_operator_element_sparse(
