@@ -29,6 +29,7 @@ class topicTaskSparse(object):
             sigma_w0=1.0,
             sigma_wg=0.5,
             sigma_x0=1.0,
+            sigma_xd=0.3,
             sigma_xg=1.0,
             sigma_y=1.0,
             nonlinear_dim=5,
@@ -41,6 +42,7 @@ class topicTaskSparse(object):
         :param sigma_w0: stddev of global weights
         :param sigma_wg: stddev of weights of special tasks
         :param sigma_x0: stddev of cluster centers of features
+        :param sigma_xd: stddev of within-cluster features
         :param sigma_xg: stddev of the multiple Gaussian of feature distribution
         :param sigma_y:  stddev of y given x, w
         :param nonlinear_dim: # nonlinear bases
@@ -53,6 +55,7 @@ class topicTaskSparse(object):
             "sigma_w0": sigma_w0,
             "sigma_wg": sigma_wg,
             "sigma_x0": sigma_x0,
+            "sigma_xd": sigma_xd,
             "sigma_xg": sigma_xg,
             "sigma_y": sigma_y,
             "nonlinear_dim": nonlinear_dim,
@@ -156,14 +159,20 @@ class topicTaskSparse(object):
             y_shape = [self.pars['w_shape'][-1]]
         data_size_bynow = 0
         for t in range(self.pars["T"]):
-            x_t = np.random.normal(
+            x_t_delt = np.random.normal(
                 loc=0.0,
-                scale=self.pars["sigma_x0"],
+                scale=self.pars["sigma_xd"],
                 size=[n_t] + self.pars["x_shape"]
             )
+            sample_g = np.random.choice(
+                self.pars["G"],
+                n_t,
+            )
+            x_t_g = self.variable["theta_g"][sample_g]
+            x_t = x_t_delt + x_t_g
             g_dist = np.expand_dims(x_t, axis=1) - np.expand_dims(self.variable["theta_g"], axis=0)
             g_dist = special.softmax(
-                np.power(
+                - np.power(
                     np.linalg.norm(
                         g_dist,
                         axis=-1
@@ -185,7 +194,7 @@ class topicTaskSparse(object):
             )
             y_t = 0.0
             for nd in range(self.pars["nonlinear_dim"]):
-                y_t += np.sin(y_t_ * self.variable["alpha"][nd] + self.variable["beta"])
+                y_t += np.sin(y_t_ * self.variable["alpha"][nd] + self.variable["beta"][nd])
             y_t += y_t_
             y_t += np.random.normal(
                 loc=0.0,
@@ -247,22 +256,23 @@ def write2file(
 class ArgParse(object):
     def __init__(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument("-T", "--T", type=int, default=3)
-        parser.add_argument("-G", "--G", type=int, default=4)
-        parser.add_argument("-M", "--M", type=int, default=1)
+        parser.add_argument("-T", "--T", type=int, default=12)
+        parser.add_argument("-G", "--G", type=int, default=3)
+        parser.add_argument("-M", "--M", type=int, default=4)
         parser.add_argument("-sw0", "--sigma_w0", type=float, default=1.0)
-        parser.add_argument("-swg", "--sigma_wg", type=float, default=0.5)
+        parser.add_argument("-swg", "--sigma_wg", type=float, default=3.0)
         parser.add_argument("-sx0", "--sigma_x0", type=float, default=1.0)
-        parser.add_argument("-sxg", "--sigma_xg", type=float, default=1.0)
+        parser.add_argument("-sxd", "--sigma_xd", type=float, default=0.2)
+        parser.add_argument("-sxg", "--sigma_xg", type=float, default=0.1)
         parser.add_argument("-sy", "--sigma_y", type=float, default=1.0)
         parser.add_argument("-nd", "--nonlinear_dim", type=int, default=5)
         parser.add_argument("-sn", "--sigma_nonlinear", type=float, default=0.01)
         parser.add_argument("-xd", "--x_dim", type=int, default=64)
-        parser.add_argument("-yd", "--y_dim", type=int, default=5)
-        parser.add_argument("-rs", "--random_seed", type=int, default=2019)
+        parser.add_argument("-yd", "--y_dim", type=int, default=2)
+        parser.add_argument("-rs", "--random_seed", type=int, default=2018)
         parser.add_argument("-v", "--verbose", default=True, action="store_false")
-        parser.add_argument("-n_t", "--n_t", type=int, default=2000)
-        parser.add_argument("-dn", "--dir_name", type=str, default="../data/synthetic_topic_task_sparse_v2_T3")
+        parser.add_argument("-n_t", "--n_t", type=int, default=1000)
+        parser.add_argument("-dn", "--dir_name", type=str, default="../data/synthetic_topic_task_sparse_v3")
         self.parser = parser
 
     def parse_args(self):

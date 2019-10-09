@@ -143,27 +143,33 @@ class TopicTaskSparseLayerWise(SharedBottom):
             add reconstruction loss of topic
         """
         regularization_loss = super(TopicTaskSparseLayerWise, self)._setup_regularization(**kwargs)
-        uniform_gate = tf.ones_like(self.gate, dtype=tf.float32) / (1.0 * self.model_spec["topic_dim"])
-        gate_smooth = 0.9 * self.gate + 0.1 * uniform_gate
-        topic_entropy_loss = - tf.einsum(
-            "ij,ij->i",
-            gate_smooth,
-            tf.math.log(gate_smooth)
-        )
-        topic_entropy_loss_mean = tf.reduce_mean(topic_entropy_loss)
-        topic_entropy_regularization = 0.1
-        regularization_loss += (topic_entropy_regularization * topic_entropy_loss_mean)
+
+        # entropy regularization #
+        if "regularization_topic_entropy" in self.model_spec:  # backward compatible
+            # smoothing entropy for numerical stability
+            uniform_gate = tf.ones_like(self.gate, dtype=tf.float32) / (1.0 * self.model_spec["topic_dim"])
+            gate_smooth = 0.9 * self.gate + 0.1 * uniform_gate
+            topic_entropy_loss = - tf.einsum(
+                "ij,ij->i",
+                gate_smooth,
+                tf.math.log(gate_smooth)
+            )
+            topic_entropy_loss_mean = tf.reduce_mean(topic_entropy_loss)
+            topic_entropy_regularization = self.model_spec["regularization_topic_entropy"]  # default 0.1
+            regularization_loss += (topic_entropy_regularization * topic_entropy_loss_mean)
+
         # reconstruction loss #
-        feature_target = tf.layers.dense(
-            self.gate,
-            units=self.feature_dim,
-            kernel_initializer=tf.truncated_normal_initializer(stddev=0.02),
-            name="feature_target"
-        ) # warning: trainable variable defined outside of _setup_net()
-        reconstruction_loss = tf.reduce_sum(tf.math.square(feature_target - self.feature), axis=-1) 
-        reconstruction_loss_mean = tf.reduce_mean(reconstruction_loss)
-        reconstruction_regularization = 0.1
-        regularization_loss += (reconstruction_regularization * reconstruction_loss_mean)
+        if "regularization_reconstruction" in self.model_spec:  # backward compatible
+            feature_target = tf.layers.dense(
+                self.gate,
+                units=self.feature_dim,
+                kernel_initializer=tf.truncated_normal_initializer(stddev=0.02),
+                name="feature_target"
+            )  # warning: trainable variable defined outside of _setup_net()
+            reconstruction_loss = tf.reduce_sum(tf.math.square(feature_target - self.feature), axis=-1)
+            reconstruction_loss_mean = tf.reduce_mean(reconstruction_loss)
+            reconstruction_regularization = self.model_spec["regularization_reconstruction"]  # default 0.1
+            regularization_loss += (reconstruction_regularization * reconstruction_loss_mean)
         return regularization_loss
 
     def partial_restore(
