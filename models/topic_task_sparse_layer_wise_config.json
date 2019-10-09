@@ -7,6 +7,8 @@
   "dropout_task_hidden_a": 0.0,
   "sparse_regularization_lambda": 0.01,
   "regularization_l2": 0.0,
+  "regularization_topic_entropy": 0.1,
+  "regularization_reconstruction": 0.1,
   "global_block_weight": 1.0,
   "optim_params": {
     "learning_rate": 0.1,
