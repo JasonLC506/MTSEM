@@ -35,6 +35,7 @@ def ht_find_best(
             perfs_file=ht_perf_file
         )
     print(ht.find_best(max_best=True))
+    # print(ht.find_best(primary_index=2, max_best=False))  # SEM data
 
 
 class ArgParse(object):
